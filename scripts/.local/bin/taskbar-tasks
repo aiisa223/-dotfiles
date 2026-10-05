@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+tree="$(i3-msg -t get_tree 2>/dev/null || printf '{}')"
+
+# Font Awesome 6 Free Solid
+ICON_HELIUM=$'\uf0ac'   # globe
+ICON_GPT=$'\uf544'      # robot
+ICON_TERM=$'\uf120'     # terminal
+ICON_FILES=$'\uf07b'    # folder
+
+
+class_running() {
+    local class="$1"
+
+    jq -e --arg class "$class" '
+        .. |
+        objects |
+        select((.window_properties.class? // "") == $class)
+    ' <<<"$tree" >/dev/null
+}
+
+
+class_focused() {
+    local class="$1"
+
+    jq -e --arg class "$class" '
+        .. |
+        objects |
+        select(.focused? == true) |
+        select((.window_properties.class? // "") == $class)
+    ' <<<"$tree" >/dev/null
+}
+
+
+helium_running() {
+    jq -e '
+        .. |
+        objects |
+        select(.window? != null) |
+        select(
+            ((.window_properties.class? // "")
+                | ascii_downcase
+                | contains("helium"))
+            or
+            ((.window_properties.instance? // "")
+                | ascii_downcase
+                | contains("helium"))
+            or
+            ((.name? // "") | test(" - Helium$"; "i"))
+        )
+    ' <<<"$tree" >/dev/null
+}
+
+
+helium_focused() {
+    jq -e '
+        .. |
+        objects |
+        select(.focused? == true) |
+        select(
+            ((.window_properties.class? // "")
+                | ascii_downcase
+                | contains("helium"))
+            or
+            ((.window_properties.instance? // "")
+                | ascii_downcase
+                | contains("helium"))
+            or
+            ((.name? // "") | test(" - Helium$"; "i"))
+        )
+    ' <<<"$tree" >/dev/null
+}
+
+
+render() {
+    local key="$1"
+    local icon="$2"
+    local focused="$3"
+    local running="$4"
+
+    local command="$HOME/.local/bin/taskbar-app $key"
+
+    if [[ "$focused" == true ]]; then
+        # Focused: brightest icon + bright purple indicator.
+        printf \
+          '%%{A1:%s:}%%{F#eee8f0}%%{u#9a66b5}%%{+u}  %s  %%{-u}%%{F-}%%{A}' \
+          "$command" "$icon"
+
+    elif [[ "$running" == true ]]; then
+        # Running: normal icon + darker indicator.
+        printf \
+          '%%{A1:%s:}%%{F#cfc6d2}%%{u#563164}%%{+u}  %s  %%{-u}%%{F-}%%{A}' \
+          "$command" "$icon"
+
+    else
+        # Closed/pinned.
+        printf \
+          '%%{A1:%s:}%%{F#746a79}  %s  %%{F-}%%{A}' \
+          "$command" "$icon"
+    fi
+}
+
+
+hf=false
+hr=false
+helium_focused && hf=true || true
+helium_running && hr=true || true
+render helium "$ICON_HELIUM" "$hf" "$hr"
+
+printf '   '
+
+
+gf=false
+gr=false
+class_focused "Chatgpt" && gf=true || true
+class_running "Chatgpt" && gr=true || true
+render gpt "$ICON_GPT" "$gf" "$gr"
+
+printf '   '
+
+
+tf=false
+tr=false
+class_focused "kitty" && tf=true || true
+class_running "kitty" && tr=true || true
+render term "$ICON_TERM" "$tf" "$tr"
+
+printf '   '
+
+
+ff=false
+fr=false
+class_focused "dolphin" && ff=true || true
+class_running "dolphin" && fr=true || true
+render files "$ICON_FILES" "$ff" "$fr"
+
+printf '\n'

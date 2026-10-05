@@ -1,0 +1,291 @@
+[colors]
+transparent = #00000000
+
+background = #050306
+island = #F2050306
+island-alt = #F209070B
+background-alt = #0B090D
+
+foreground = #cfc6d2
+foreground-bright = #eee8f0
+dim = #746a79
+
+purple = #563164
+purple-hi = #9a66b5
+alert = #ad6079
+
+
+[bar/main]
+monitor = eDP-1
+
+bottom = true
+width = 100%
+height = 30pt
+fixed-center = true
+
+; The bar itself disappears into the desktop.
+; Only the module groups are visible.
+background = ${colors.transparent}
+foreground = ${colors.foreground}
+
+; Transparent breathing room above/below the islands.
+border-size = 4pt
+border-color = ${colors.transparent}
+
+padding-left = 1
+padding-right = 1
+module-margin = 0
+
+font-0 = "Terminus (TTF):style=Medium:size=12;2"
+
+modules-left = i3
+modules-center = title
+modules-right = cpu memory temperature pulseaudio battery profile gap-1 date gap-2 tray
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+enable-ipc = true
+wm-restack = i3
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; WORKSPACE ISLAND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+line-size = 2pt
+font-1 = "Terminus (TTF):style=Medium:size=11;2"
+[module/i3]
+type = internal/i3
+
+pin-workspaces = true
+show-urgent = true
+index-sort = true
+
+enable-click = true
+enable-scroll = false
+
+format = <label-state> <label-mode>
+format-background = ${colors.island}
+format-padding = 1
+
+label-focused = %index%
+label-focused-foreground = ${colors.foreground-bright}
+label-focused-background = ${colors.purple}
+label-focused-padding = 1
+
+label-unfocused = %index%
+label-unfocused-foreground = ${colors.dim}
+label-unfocused-background = ${colors.island}
+label-unfocused-padding = 1
+
+label-visible = %index%
+label-visible-foreground = ${colors.foreground}
+label-visible-background = ${colors.background-alt}
+label-visible-padding = 1
+
+label-urgent = %index%
+label-urgent-foreground = ${colors.foreground-bright}
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 1
+
+label-mode = %mode%
+label-mode-foreground = ${colors.foreground-bright}
+label-mode-background = ${colors.background-alt}
+label-mode-padding = 1
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ACTIVE WINDOW ISLAND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+label-focused-font = 2
+label-unfocused-font = 2
+label-visible-font = 2
+label-urgent-font = 2
+label-mode-font = 2
+label-focused-underline = ${colors.purple-hi}
+label-urgent-underline = ${colors.alert}
+[module/title]
+type = internal/xwindow
+
+format = <label>
+format-background = ${colors.island-alt}
+format-padding = 2
+
+label = %title%
+label-maxlen = 38
+
+label-empty = desktop
+label-empty-foreground = ${colors.dim}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; SYSTEM ISLAND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+format-underline = ${colors.purple}
+[module/cpu]
+type = internal/cpu
+
+interval = 2
+warn-percentage = 90
+
+format = <label>
+format-background = ${colors.island}
+format-padding = 1
+
+label = %{F#9a66b5}CPU%{F-} %percentage%%
+label-warn = %{F#ad6079}CPU%{F-} %percentage%%
+format-underline = ${colors.purple}
+[module/memory]
+type = internal/memory
+
+interval = 2
+warn-percentage = 90
+
+format = <label>
+format-background = ${colors.island}
+format-padding = 1
+
+label = %{F#9a66b5}MEM%{F-} %gb_used%/%gb_total%G
+label-warn = %{F#ad6079}MEM%{F-} %gb_used%/%gb_total%G
+format-underline = ${colors.purple}
+[module/temperature]
+type = internal/temperature
+
+interval = 5
+zone-type = x86_pkg_temp
+warn-temperature = 95
+
+format = <label>
+format-background = ${colors.island}
+format-padding = 1
+
+label = %{F#9a66b5}TEMP%{F-} %temperature-c%
+label-warn = %{F#ad6079}TEMP%{F-} %temperature-c%
+format-underline = ${colors.purple}
+[module/pulseaudio]
+type = internal/pulseaudio
+
+use-ui-max = false
+interval = 5
+
+format-volume = <label-volume>
+format-volume-background = ${colors.island}
+format-volume-padding = 1
+
+format-muted = <label-muted>
+format-muted-background = ${colors.island}
+format-muted-padding = 1
+
+label-volume = %{F#9a66b5}VOL%{F-} %percentage%%
+label-muted = %{F#ad6079}VOL%{F-} mute
+
+click-left = #pulseaudio.toggle
+click-right = pavucontrol
+scroll-up = #pulseaudio.inc
+scroll-down = #pulseaudio.dec
+format-volume-underline = ${colors.purple}
+format-muted-underline = ${colors.purple}
+[module/battery]
+type = internal/battery
+
+battery = BAT0
+adapter = AC
+
+full-at = 100
+low-at = 15
+poll-interval = 5
+
+format-charging = <label-charging>
+format-charging-background = ${colors.island}
+format-charging-padding = 1
+
+format-discharging = <label-discharging>
+format-discharging-background = ${colors.island}
+format-discharging-padding = 1
+
+format-full = <label-full>
+format-full-background = ${colors.island}
+format-full-padding = 1
+
+format-low = <label-low>
+format-low-background = ${colors.island}
+format-low-padding = 1
+
+label-charging = %{F#9a66b5}BAT%{F-} +%percentage%%
+label-discharging = %{F#9a66b5}BAT%{F-} %percentage%%
+label-full = %{F#9a66b5}BAT%{F-} %percentage%%
+label-low = %{F#ad6079}BAT%{F-} %percentage%%
+format-charging-underline = ${colors.purple}
+format-discharging-underline = ${colors.purple}
+format-full-underline = ${colors.purple}
+format-low-underline = ${colors.purple}
+[module/profile]
+type = custom/script
+
+exec = /home/ali/.local/bin/platform-profile-status
+interval = 5
+
+format = <label>
+format-background = ${colors.island}
+format-padding = 1
+
+label = %{F#9a66b5}MODE%{F-} %output%
+
+click-left = /home/ali/.local/bin/platform-profile-menu &
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; TRANSPARENT SEPARATORS BETWEEN ISLANDS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+format-underline = ${colors.purple}
+[module/gap-1]
+type = custom/text
+
+label = "     "
+label-background = ${colors.transparent}
+
+
+[module/gap-2]
+type = custom/text
+
+label = "     "
+label-background = ${colors.transparent}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; CLOCK ISLAND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[module/date]
+type = internal/date
+
+interval = 5
+
+format = <label>
+format-background = ${colors.island-alt}
+format-padding = 2
+
+date = %a %b %d  %H:%M
+label = %date%
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; TRAY ISLAND
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+format-underline = ${colors.purple}
+[module/tray]
+type = internal/tray
+
+format = <tray>
+format-background = ${colors.island-alt}
+format-padding = 2
+
+; Deliberately more generous than the previous prototype.
+tray-size = 74%
+tray-padding = 3px
+tray-spacing = 10px
+
+tray-background = ${colors.island-alt}
+[settings]
+screenchange-reload = true
+pseudo-transparency = true

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+    printf '%s\n' \
+        'Projects' \
+        'Indicant Repo' \
+        'Velos Monitor' \
+        'Downloads' \
+        'Documents' \
+        'Pictures' \
+        'Screenshots' \
+        'Home' \
+        'Config'
+    exit 0
+fi
+
+case "$1" in
+    'Projects')
+        target="$HOME/Data/work/projects"
+        ;;
+    'Indicant Repo')
+        target="$HOME/Data/work/projects/beacon-labs-indicant"
+        ;;
+    'Velos Monitor')
+        target="$HOME/Data/work/projects/velos_monitor"
+        ;;
+    'Downloads')
+        target="$HOME/Downloads"
+        ;;
+    'Documents')
+        target="$HOME/Documents"
+        ;;
+    'Pictures')
+        target="$HOME/Pictures"
+        ;;
+    'Screenshots')
+        target="$HOME/Pictures/Screenshots"
+        ;;
+    'Home')
+        target="$HOME"
+        ;;
+    'Config')
+        target="$HOME/.config"
+        ;;
+    *)
+        exit 0
+        ;;
+esac
+
+[[ -d "$target" || -f "$target" ]] || exit 0
+setsid -f xdg-open "$target" >/dev/null 2>&1

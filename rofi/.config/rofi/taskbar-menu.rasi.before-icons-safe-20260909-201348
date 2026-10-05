@@ -1,0 +1,195 @@
+* {
+    background:         #050306;
+    island:             #09070B;
+    selection:          #2a1631;
+
+    foreground:         #cfc6d2;
+    foreground-bright:  #eee8f0;
+    dim:                #746a79;
+
+    purple:             #563164;
+    purple-hi:          #9a66b5;
+    alert:              #ad6079;
+
+    font: "Terminus (TTF) 12";
+}
+
+window {
+    location: southwest;
+    anchor: southwest;
+
+    /* Align directly above Polybar. */
+    x-offset: 6px;
+    y-offset: -48px;
+
+    width: 540px;
+
+    background-color: @background;
+
+    border: 2px;
+    border-color: @purple-hi;
+    border-radius: 0px;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing: 0px;
+    padding: 0px;
+
+    children: [
+        inputbar,
+        listview
+    ];
+}
+
+
+/* ----------------------------------------------------------
+ * SEARCH
+ * ---------------------------------------------------------- */
+
+inputbar {
+    background-color: @island;
+
+    padding: 10px 12px;
+    spacing: 10px;
+
+    children: [
+        prompt,
+        entry
+    ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @purple-hi;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @foreground-bright;
+
+    placeholder: "applications and windows";
+    placeholder-color: @dim;
+
+    expand: true;
+}
+
+
+/* ----------------------------------------------------------
+ * RESULTS
+ * ---------------------------------------------------------- */
+
+listview {
+    background-color: transparent;
+
+    lines: 7;
+    columns: 1;
+
+    fixed-height: false;
+    dynamic: true;
+
+    cycle: true;
+    scrollbar: false;
+
+    spacing: 0px;
+    padding: 5px 0px;
+}
+
+element {
+    background-color: transparent;
+    text-color: @foreground;
+
+    padding: 6px 11px;
+    spacing: 10px;
+
+    border: 0px;
+    border-radius: 0px;
+
+    /* Explicitly retain BOTH icon and text. */
+    children: [
+        element-icon,
+        element-text
+    ];
+}
+
+element-icon {
+    background-color: transparent;
+
+    size: 18px;
+    expand: false;
+
+    vertical-align: 0.5;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: @foreground;
+
+    expand: true;
+
+    horizontal-align: 0.0;
+    vertical-align: 0.5;
+}
+
+
+/* ----------------------------------------------------------
+ * EXPLICIT ROW STATES
+ *
+ * Do not depend on inherited colors here.
+ * ---------------------------------------------------------- */
+
+element normal.normal,
+element alternate.normal {
+    background-color: transparent;
+    text-color: @foreground;
+}
+
+element normal.normal element-text,
+element alternate.normal element-text {
+    text-color: @foreground;
+}
+
+element normal.active,
+element alternate.active {
+    background-color: transparent;
+    text-color: @purple-hi;
+}
+
+element normal.active element-text,
+element alternate.active element-text {
+    text-color: @purple-hi;
+}
+
+element normal.urgent,
+element alternate.urgent {
+    background-color: transparent;
+    text-color: @alert;
+}
+
+element normal.urgent element-text,
+element alternate.urgent element-text {
+    text-color: @alert;
+}
+
+
+/* Selected item: dark purple, not a giant neon slab. */
+
+element selected.normal,
+element selected.active {
+    background-color: @selection;
+    text-color: @foreground-bright;
+}
+
+element selected.normal element-text,
+element selected.active element-text {
+    text-color: @foreground-bright;
+}
+
+element selected.urgent {
+    background-color: @alert;
+    text-color: @foreground-bright;
+}
+
+element selected.urgent element-text {
+    text-color: @foreground-bright;
+}

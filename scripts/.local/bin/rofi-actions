@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+row() {
+  local id="$1" display="$2" meta="$3" icon="$4"
+  printf '%s\0display\x1f%s\x1fmeta\x1f%s\x1ficon\x1f%s\x1finfo\x1f%s\n' \
+    "$id" "$display" "$meta" "$icon" "$id"
+}
+
+spawn() {
+  setsid -f "$@" >/dev/null 2>&1
+}
+
+if [[ "${ROFI_RETV:-0}" == 0 && $# -eq 0 ]]; then
+  printf '\0no-custom\x1ftrue\n'
+  command -v fsearch >/dev/null 2>&1 && \
+    row search-files "Search files" "files find locate indexed filename documents everything search" system-search
+  row switch-windows "Switch windows" "windows switch apps task view alt tab running" window-new
+  row run-command "Run command" "run command executable shell command prompt" system-run
+  row browse-files "Browse files" "files folders explorer home browse file manager" folder
+  command -v copyq >/dev/null 2>&1 && \
+    row clipboard "Clipboard history" "clipboard paste copy history win v" edit-paste
+  command -v qalc >/dev/null 2>&1 && \
+    row calculator "Calculator" "calculator calc math equation arithmetic" accessories-calculator
+  command -v rofimoji >/dev/null 2>&1 && \
+    row emoji "Emoji & symbols" "emoji symbols unicode characters picker" face-smile
+  command -v flameshot >/dev/null 2>&1 && \
+    row screenshot "Screenshot region" "screenshot snip snipping capture screen" camera-photo
+  command -v btop >/dev/null 2>&1 && command -v kitty >/dev/null 2>&1 && \
+    row task-manager "Task Manager" "task manager process processes cpu ram memory performance monitor" utilities-system-monitor
+  command -v pavucontrol >/dev/null 2>&1 && \
+    row audio "Audio settings" "audio sound volume mixer microphone speakers" audio-volume-high
+  command -v arandr >/dev/null 2>&1 && \
+    row display "Display settings" "display monitor screen resolution arrangement" video-display
+  command -v blueman-manager >/dev/null 2>&1 && \
+    row bluetooth "Bluetooth" "bluetooth headphones devices mouse keyboard" bluetooth
+  if command -v nm-connection-editor >/dev/null 2>&1 || command -v nmtui >/dev/null 2>&1; then
+    row network "Network connections" "network wifi wireless ethernet vpn internet connections" network-wireless
+  fi
+  [[ -x "$HOME/.local/bin/platform-profile-menu" ]] && \
+    row power-profile "Power profile" "power mode profile balanced performance quiet cool battery" preferences-system-power-management
+  row shortcuts "Keyboard shortcuts" "shortcuts hotkeys keys keyboard bindings help" input-keyboard
+  [[ -d "$HOME/Data/work/projects" ]] && \
+    row projects "Projects" "projects repos repositories code development work" folder-development
+  [[ -d "$HOME/Downloads" ]] && \
+    row downloads "Downloads" "downloads downloaded files folder" folder-download
+  row power-session "Power / session" "lock sleep suspend logout reboot restart shutdown power off session" system-shutdown
+  exit 0
+fi
+
+id="${ROFI_INFO:-${1:-}}"
+case "$id" in
+  search-files) spawn fsearch ;;
+  switch-windows) spawn rofi -replace -show window -theme "$HOME/.config/rofi/superd.rasi" -show-icons ;;
+  run-command) spawn rofi -replace -show run -theme "$HOME/.config/rofi/superd.rasi" ;;
+  browse-files) spawn dolphin "$HOME" ;;
+  clipboard) spawn copyq menu ;;
+  calculator) spawn "$HOME/.local/bin/rofi-calculator" ;;
+  emoji) spawn rofimoji --action clipboard ;;
+  screenshot) spawn flameshot gui ;;
+  task-manager) spawn kitty --title "Task Manager" btop ;;
+  audio) spawn pavucontrol ;;
+  display) spawn arandr ;;
+  bluetooth) spawn blueman-manager ;;
+  network)
+    if command -v nm-connection-editor >/dev/null 2>&1; then
+      spawn nm-connection-editor
+    else
+      spawn kitty --title Network nmtui
+    fi
+    ;;
+  power-profile) spawn "$HOME/.local/bin/platform-profile-menu" ;;
+  shortcuts)
+    if command -v deepin-shortcut-viewer >/dev/null 2>&1 && [[ -f "$HOME/.config/i3/shortcuts.json" ]]; then
+      json="$(jq -c . "$HOME/.config/i3/shortcuts.json")"
+      spawn deepin-shortcut-viewer "-j=$json"
+    else
+      notify-send "Keyboard shortcuts" "Use your existing i3 shortcut guide."
+    fi
+    ;;
+  projects) spawn "$HOME/.local/bin/rofi-projects" ;;
+  downloads) spawn dolphin "$HOME/Downloads" ;;
+  power-session) spawn "$HOME/.local/bin/rofi-power-session" ;;
+esac

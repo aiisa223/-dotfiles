@@ -1,0 +1,8 @@
+configuration {
+    modi: "drun,run";
+    show-icons: false;
+    drun-display-format: "{name}";
+    font: "Terminus (TTF) 13";
+}
+
+@theme "unix-purple"

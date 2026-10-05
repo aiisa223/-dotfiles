@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# FireConnect launcher. Uses the Node binary discovered at install time, falling
+# back to PATH lookup, so the shell env hook works without `node` on PATH.
+NODE_BIN="${FIRECONNECT_NODE_BIN:-/run/user/1000/fnm_multishells/86216_1789267396982/bin/node}"
+[ -x "$NODE_BIN" ] || NODE_BIN="$(command -v node 2>/dev/null)"
+if [ -z "$NODE_BIN" ] || ! [ -x "$NODE_BIN" ]; then
+  echo "fireconnect: Node.js was not found. Install Node and re-run the FireConnect installer." >&2
+  exit 1
+fi
+# Suppress Node's ExperimentalWarning for node:sqlite (Node >= 22).
+# --disable-warning landed in Node 21.3.0; older Node would reject the flag.
+node_flags=""
+if node_major="$($NODE_BIN -p "process.versions.node.split('.')[0]" 2>/dev/null)" && [ "${node_major}" -ge 22 ] 2>/dev/null; then
+  node_flags="--disable-warning=ExperimentalWarning"
+fi
+exec "$NODE_BIN" ${node_flags} "/home/ali/.fireconnect/cli/packages/setup-cli/bin/fireconnect.mjs" "$@"

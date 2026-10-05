@@ -1,0 +1,29 @@
+# Rendering
+backend = "glx";
+vsync = true;
+use-damage = true;
+
+# Square, fully opaque workstation windows
+corner-radius = 0;
+active-opacity = 1.0;
+inactive-opacity = 1.0;
+frame-opacity = 1.0;
+
+# Subtle depth
+shadow = true;
+shadow-radius = 6;
+shadow-opacity = 0.28;
+shadow-offset-x = -4;
+shadow-offset-y = -4;
+shadow-color = "#000000";
+
+shadow-exclude = [
+    "window_type = 'dock'",
+    "window_type = 'desktop'"
+];
+
+# Fast, understated transitions
+fading = true;
+fade-delta = 8;
+fade-in-step = 0.12;
+fade-out-step = 0.12;

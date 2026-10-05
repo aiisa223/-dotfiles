@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /home/ali/.hermes/hermes-agent/venv/bin/hermes -p beacon-planner "$@"

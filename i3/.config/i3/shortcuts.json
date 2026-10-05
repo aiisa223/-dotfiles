@@ -1,0 +1,336 @@
+{
+  "shortcut": [
+    {
+      "groupName": "Essentials",
+      "groupItems": [
+        {
+          "name": "Terminal",
+          "value": "Super + Enter"
+        },
+        {
+          "name": "Applications",
+          "value": "Super + D"
+        },
+        {
+          "name": "Indicant Menu",
+          "value": "Super + Shift + D"
+        },
+        {
+          "name": "Files",
+          "value": "Super + E"
+        },
+        {
+          "name": "Clipboard History",
+          "value": "Super + C"
+        },
+        {
+          "name": "Window Switcher",
+          "value": "Alt + Tab"
+        },
+        {
+          "name": "Close Window",
+          "value": "Super + Shift + Q"
+        },
+        {
+          "name": "Screenshot",
+          "value": "Print"
+        },
+        {
+          "name": "Lock",
+          "value": "Ctrl + Alt + L"
+        },
+        {
+          "name": "Shortcut Help",
+          "value": "Ctrl + Shift + /"
+        }
+      ]
+    },
+    {
+      "groupName": "Workspaces",
+      "groupItems": [
+        {
+          "name": "Code Workspace",
+          "value": "Super + 1"
+        },
+        {
+          "name": "Agent Workspace",
+          "value": "Super + 2"
+        },
+        {
+          "name": "Terminal Workspace",
+          "value": "Super + 3"
+        },
+        {
+          "name": "Web Workspace",
+          "value": "Super + 4"
+        },
+        {
+          "name": "Ops Workspace",
+          "value": "Super + 5"
+        },
+        {
+          "name": "Workspace 6-10",
+          "value": "Super + 6...0"
+        },
+        {
+          "name": "Move to Code",
+          "value": "Super + Shift + 1"
+        },
+        {
+          "name": "Move to Agent",
+          "value": "Super + Shift + 2"
+        },
+        {
+          "name": "Move to Terminal",
+          "value": "Super + Shift + 3"
+        },
+        {
+          "name": "Move to Web",
+          "value": "Super + Shift + 4"
+        },
+        {
+          "name": "Move to Ops",
+          "value": "Super + Shift + 5"
+        },
+        {
+          "name": "Move to Workspace 6-10",
+          "value": "Super + Shift + 6...0"
+        },
+        {
+          "name": "Previous Workspace",
+          "value": "Super + ,"
+        },
+        {
+          "name": "Next Workspace",
+          "value": "Super + ."
+        },
+        {
+          "name": "Last Workspace",
+          "value": "Super + B"
+        }
+      ]
+    },
+    {
+      "groupName": "Focus",
+      "groupItems": [
+        {
+          "name": "Focus Left",
+          "value": "Super + Left / J"
+        },
+        {
+          "name": "Focus Down",
+          "value": "Super + Down / K"
+        },
+        {
+          "name": "Focus Up",
+          "value": "Super + Up / L"
+        },
+        {
+          "name": "Focus Right",
+          "value": "Super + Right / ;"
+        },
+        {
+          "name": "Focus Parent",
+          "value": "Super + A"
+        },
+        {
+          "name": "Tiling / Floating Focus",
+          "value": "Super + Space"
+        }
+      ]
+    },
+    {
+      "groupName": "Move Windows",
+      "groupItems": [
+        {
+          "name": "Move Left",
+          "value": "Super + Shift + Left / J"
+        },
+        {
+          "name": "Move Down",
+          "value": "Super + Shift + Down / K"
+        },
+        {
+          "name": "Move Up",
+          "value": "Super + Shift + Up / L"
+        },
+        {
+          "name": "Move Right",
+          "value": "Super + Shift + Right / ;"
+        }
+      ]
+    },
+    {
+      "groupName": "Scratchpad",
+      "groupItems": [
+        {
+          "name": "Indicant Terminal",
+          "value": "Super + `"
+        },
+        {
+          "name": "Recreate Indicant Terminal",
+          "value": "Super + Shift + `"
+        },
+        {
+          "name": "Show / Hide Generic Scratchpad",
+          "value": "Super + -"
+        },
+        {
+          "name": "Send Window to Generic Scratchpad",
+          "value": "Super + Shift + -"
+        }
+      ]
+    },
+    {
+      "groupName": "Kitty",
+      "groupItems": [
+        {
+          "name": "Copy Last Command Output",
+          "value": "Ctrl + Shift + Y"
+        }
+      ]
+    },
+    {
+      "groupName": "Layouts",
+      "groupItems": [
+        {
+          "name": "Horizontal Split",
+          "value": "Super + H"
+        },
+        {
+          "name": "Vertical Split",
+          "value": "Super + V"
+        },
+        {
+          "name": "Fullscreen",
+          "value": "Super + F"
+        },
+        {
+          "name": "Stacking",
+          "value": "Super + S"
+        },
+        {
+          "name": "Tabbed",
+          "value": "Super + W"
+        },
+        {
+          "name": "Toggle Split",
+          "value": "Super + Ctrl + E"
+        },
+        {
+          "name": "Toggle Floating",
+          "value": "Super + Shift + Space"
+        }
+      ]
+    },
+    {
+      "groupName": "Resize Mode",
+      "groupItems": [
+        {
+          "name": "Enter Resize Mode",
+          "value": "Super + R"
+        },
+        {
+          "name": "Shrink Width",
+          "value": "Left / J"
+        },
+        {
+          "name": "Grow Width",
+          "value": "Right / ;"
+        },
+        {
+          "name": "Shrink Height",
+          "value": "Up / L"
+        },
+        {
+          "name": "Grow Height",
+          "value": "Down / K"
+        },
+        {
+          "name": "Exit Resize Mode",
+          "value": "Enter / Esc / Super + R"
+        }
+      ]
+    },
+    {
+      "groupName": "Audio & Media",
+      "groupItems": [
+        {
+          "name": "Volume Up",
+          "value": "Volume Up"
+        },
+        {
+          "name": "Volume Down",
+          "value": "Volume Down"
+        },
+        {
+          "name": "Speaker Mute",
+          "value": "Mute"
+        },
+        {
+          "name": "Microphone Mute",
+          "value": "Mic Mute"
+        },
+        {
+          "name": "Play / Pause",
+          "value": "Play"
+        },
+        {
+          "name": "Next Track",
+          "value": "Next"
+        },
+        {
+          "name": "Previous Track",
+          "value": "Previous"
+        }
+      ]
+    },
+    {
+      "groupName": "Laptop",
+      "groupItems": [
+        {
+          "name": "Brightness Up",
+          "value": "Brightness Up"
+        },
+        {
+          "name": "Brightness Down",
+          "value": "Brightness Down"
+        },
+        {
+          "name": "Display Layout",
+          "value": "Display Key"
+        },
+        {
+          "name": "Hardware Lock",
+          "value": "Screen Saver Key"
+        }
+      ]
+    },
+    {
+      "groupName": "Notifications",
+      "groupItems": [
+        {
+          "name": "Recall Last Notification",
+          "value": "Super + N"
+        }
+      ]
+    },
+    {
+      "groupName": "i3 System",
+      "groupItems": [
+        {
+          "name": "Reload Config",
+          "value": "Super + Shift + C"
+        },
+        {
+          "name": "Restart i3",
+          "value": "Super + Shift + R"
+        },
+        {
+          "name": "Exit Session",
+          "value": "Super + Shift + E"
+        }
+      ]
+    }
+  ]
+}

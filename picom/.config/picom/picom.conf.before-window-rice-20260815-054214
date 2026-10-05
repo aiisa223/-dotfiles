@@ -1,0 +1,6 @@
+# Minimal X11 composition for i3.
+# No visual effects; synchronized presentation only.
+
+backend = "glx";
+vsync = true;
+use-damage = true;

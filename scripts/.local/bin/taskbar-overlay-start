@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -u
+EWW="/home/ali/.local/bin/eww"
+CFG="/home/ali/.config/eww-taskbar"
+"$EWW" --config "$CFG" kill >/dev/null 2>&1 || true
+"$EWW" --config "$CFG" daemon >/tmp/beacon-shell-eww-daemon.log 2>&1
+sleep .4
+"$EWW" --config "$CFG" open taskbar >/tmp/beacon-shell-eww-open.log 2>&1

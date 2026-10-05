@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+    up)
+        pactl set-sink-volume @DEFAULT_SINK@ +10%
+        ;;
+    down)
+        pactl set-sink-volume @DEFAULT_SINK@ -10%
+        ;;
+    mute)
+        pactl set-sink-mute @DEFAULT_SINK@ toggle
+        ;;
+    *)
+        exit 2
+        ;;
+esac
+
+mute="$(
+    pactl get-sink-mute @DEFAULT_SINK@ |
+    awk '{print $2}'
+)"
+
+volume="$(
+    pactl get-sink-volume @DEFAULT_SINK@ |
+    grep -oE '[0-9]+%' |
+    head -1 |
+    tr -d '%'
+)"
+
+if [[ "$mute" == "yes" ]]; then
+    dunstify \
+        -a osd \
+        --stack-tag volume \
+        -h int:value:0 \
+        "AUDIO" \
+        "MUTED"
+else
+    bar="$volume"
+    (( bar > 100 )) && bar=100
+
+    dunstify \
+        -a osd \
+        --stack-tag volume \
+        -h int:value:"$bar" \
+        "AUDIO" \
+        "${volume}%"
+fi

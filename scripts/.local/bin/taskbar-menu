@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+THEME="$HOME/.config/rofi/taskbar-menu.rasi"
+
+exec rofi \
+    -no-config \
+    -replace \
+    -theme "$THEME" \
+    -show drun \
+    -display-drun "SEARCH" \
+    -matching fuzzy \
+    -show-icons \
+    -drun-display-format "{name}"

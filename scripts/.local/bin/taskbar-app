@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+key="${1:-}"
+manifest="$HOME/.config/eww-taskbar/apps.json"
+
+case "$key" in
+    codex) matcher='codex|chatgpt' ;;
+    pycharm) matcher='pycharm|jetbrains' ;;
+    obsidian) matcher='obsidian' ;;
+    files) matcher='dolphin' ;;
+    *) exit 2 ;;
+esac
+
+tree="$(i3-msg -t get_tree 2>/dev/null || printf '{}')"
+con_id="$(
+    jq -r --arg re "$matcher" '
+      def identity:
+        ((.window_properties.class? // "")+" "+(.window_properties.instance? // "")) | ascii_downcase;
+      [..|objects|select(.window? != null)|select(identity|test($re;"i"))|.id] | first // empty
+    ' <<<"$tree"
+)"
+if [[ -n "$con_id" ]]; then
+    i3-msg "[con_id=$con_id] focus" >/dev/null
+    exit 0
+fi
+
+desktop_id="$(jq -r --arg k "$key" '.[$k].desktop_id // empty' "$manifest")"
+[[ -n "$desktop_id" ]] || exit 1
+setsid -f gtk-launch "$desktop_id" >/dev/null 2>&1

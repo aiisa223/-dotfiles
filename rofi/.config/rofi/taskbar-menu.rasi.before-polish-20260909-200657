@@ -1,0 +1,140 @@
+* {
+    background:         #050306;
+    island:             #09070B;
+    selection:          #563164;
+
+    foreground:         #cfc6d2;
+    foreground-bright:  #eee8f0;
+    dim:                #746a79;
+
+    purple:             #563164;
+    purple-hi:          #9a66b5;
+    alert:              #ad6079;
+
+    font: "Terminus (TTF) 12";
+}
+
+window {
+    location: southwest;
+    anchor: southwest;
+
+    /* Sit immediately above the bottom Polybar. */
+    x-offset: 6px;
+    y-offset: -48px;
+
+    width: 610px;
+
+    background-color: @background;
+
+    border: 2px;
+    border-color: @purple-hi;
+    border-radius: 0px;
+}
+
+mainbox {
+    background-color: transparent;
+
+    spacing: 0px;
+    padding: 0px;
+
+    children: [
+        inputbar,
+        listview
+    ];
+}
+
+inputbar {
+    background-color: @island;
+
+    padding: 11px 12px;
+    spacing: 10px;
+
+    children: [
+        prompt,
+        entry
+    ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color: @purple-hi;
+
+    str: "SEARCH";
+}
+
+entry {
+    background-color: transparent;
+    text-color: @foreground-bright;
+
+    placeholder: "applications, windows, commands";
+    placeholder-color: @dim;
+}
+
+listview {
+    background-color: transparent;
+
+    lines: 10;
+    columns: 1;
+
+    fixed-height: false;
+    dynamic: true;
+
+    cycle: true;
+    scrollbar: false;
+
+    spacing: 0px;
+    padding: 6px 0px;
+}
+
+element {
+    background-color: transparent;
+    text-color: @foreground;
+
+    padding: 7px 12px;
+    spacing: 11px;
+
+    border: 0px;
+    border-radius: 0px;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @foreground;
+}
+
+element normal.active {
+    background-color: transparent;
+    text-color: @purple-hi;
+}
+
+element normal.urgent {
+    background-color: transparent;
+    text-color: @alert;
+}
+
+element selected.normal {
+    background-color: @selection;
+    text-color: @foreground-bright;
+}
+
+element selected.active {
+    background-color: @selection;
+    text-color: @foreground-bright;
+}
+
+element selected.urgent {
+    background-color: @alert;
+    text-color: @foreground-bright;
+}
+
+element-icon {
+    background-color: transparent;
+
+    size: 20px;
+}
+
+element-text {
+    background-color: transparent;
+
+    vertical-align: 0.5;
+}

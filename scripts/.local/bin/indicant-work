@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="/home/ali/Data/work/projects/velos_monitor"
+WORKTREE_ROOT="/home/ali/Data/work/worktrees/velos_monitor"
+REMOTE="origin"
+MAIN="main"
+
+usage() {
+    cat <<'USAGE'
+Usage:
+  indicant-work BUILD-### [slug]
+  indicant-work --check BUILD-### [slug]
+
+Examples:
+  indicant-work BUILD-265
+  indicant-work BUILD-265 cache-degradation
+  indicant-work --check BUILD-265 cache-degradation
+
+Creates:
+  branch:   codex/build-265-cache-degradation
+  worktree: /home/ali/Data/work/worktrees/velos_monitor/BUILD-265
+
+--check runs the complete preflight but does not create a branch/worktree.
+USAGE
+}
+
+die() {
+    printf 'ERROR: %s\n' "$*" >&2
+    exit 1
+}
+
+info() {
+    printf '==> %s\n' "$*"
+}
+
+CHECK_ONLY=false
+
+if [[ "${1:-}" == "--check" ]]; then
+    CHECK_ONLY=true
+    shift
+fi
+
+[[ $# -ge 1 && $# -le 2 ]] || {
+    usage >&2
+    exit 2
+}
+
+ISSUE="${1^^}"
+SLUG="${2:-}"
+
+[[ "$ISSUE" =~ ^BUILD-[0-9]+$ ]] ||
+    die "issue must have form BUILD-###"
+
+if [[ -n "$SLUG" ]]; then
+    [[ "$SLUG" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] ||
+        die "slug must be lowercase words separated by hyphens"
+fi
+
+ISSUE_LOWER="${ISSUE,,}"
+
+if [[ -n "$SLUG" ]]; then
+    BRANCH="codex/${ISSUE_LOWER}-${SLUG}"
+else
+    BRANCH="codex/${ISSUE_LOWER}"
+fi
+
+WORKTREE="$WORKTREE_ROOT/$ISSUE"
+
+[[ -d "$REPO/.git" ]] ||
+    die "canonical repository not found at $REPO"
+
+[[ "$(git -C "$REPO" rev-parse --show-toplevel)" == "$REPO" ]] ||
+    die "configured repository path is not the canonical repository root"
+
+CURRENT_BRANCH="$(
+    git -C "$REPO" symbolic-ref --quiet --short HEAD 2>/dev/null || true
+)"
+
+[[ "$CURRENT_BRANCH" == "$MAIN" ]] ||
+    die "canonical repository must be checked out on $MAIN; found ${CURRENT_BRANCH:-detached HEAD}"
+
+# A canonical main worktree should contain no implementation or local debris.
+STATUS="$(git -C "$REPO" status --porcelain=v1 --untracked-files=all)"
+
+if [[ -n "$STATUS" ]]; then
+    printf '\nCanonical main is not clean:\n%s\n\n' "$STATUS" >&2
+    die "clean the canonical main worktree before creating another worktree"
+fi
+
+# The work disk must actually be mounted.
+MOUNT_TARGET="$(
+    findmnt -n -o TARGET -T "$WORKTREE_ROOT" 2>/dev/null || true
+)"
+
+[[ "$MOUNT_TARGET" == "/home/ali/Data" ]] ||
+    die "worktree root is not on the expected /home/ali/Data filesystem"
+
+info "fetching $REMOTE"
+git -C "$REPO" fetch --prune "$REMOTE"
+
+git -C "$REPO" show-ref --verify --quiet "refs/remotes/$REMOTE/$MAIN" ||
+    die "$REMOTE/$MAIN does not exist"
+
+read -r AHEAD BEHIND < <(
+    git -C "$REPO" rev-list \
+        --left-right \
+        --count \
+        "$MAIN...$REMOTE/$MAIN"
+)
+
+if (( AHEAD > 0 )); then
+    die "local $MAIN is ahead of $REMOTE/$MAIN by $AHEAD commit(s); refusing"
+fi
+
+if (( BEHIND > 0 )); then
+    info "$MAIN is behind $REMOTE/$MAIN by $BEHIND commit(s); fast-forwarding"
+    git -C "$REPO" merge --ff-only "$REMOTE/$MAIN"
+fi
+
+LOCAL_MAIN="$(git -C "$REPO" rev-parse "$MAIN")"
+REMOTE_MAIN="$(git -C "$REPO" rev-parse "$REMOTE/$MAIN")"
+
+[[ "$LOCAL_MAIN" == "$REMOTE_MAIN" ]] ||
+    die "$MAIN is not identical to $REMOTE/$MAIN after synchronization"
+
+# Recheck cleanliness after synchronization.
+STATUS="$(git -C "$REPO" status --porcelain=v1 --untracked-files=all)"
+
+[[ -z "$STATUS" ]] ||
+    die "canonical main became dirty during preflight"
+
+if git -C "$REPO" show-ref \
+    --verify \
+    --quiet \
+    "refs/heads/$BRANCH"
+then
+    die "local branch already exists: $BRANCH"
+fi
+
+if git -C "$REPO" show-ref \
+    --verify \
+    --quiet \
+    "refs/remotes/$REMOTE/$BRANCH"
+then
+    die "remote branch already exists: $REMOTE/$BRANCH"
+fi
+
+[[ ! -e "$WORKTREE" ]] ||
+    die "worktree path already exists: $WORKTREE"
+
+if git -C "$REPO" worktree list --porcelain |
+    grep -Fxq "worktree $WORKTREE"
+then
+    die "worktree is already registered: $WORKTREE"
+fi
+
+printf '\n'
+printf 'Issue:    %s\n' "$ISSUE"
+printf 'Branch:   %s\n' "$BRANCH"
+printf 'Base:     %s\n' "$LOCAL_MAIN"
+printf 'Worktree: %s\n' "$WORKTREE"
+
+if "$CHECK_ONLY"; then
+    printf '\nPreflight: PASS\n'
+    exit 0
+fi
+
+install -d -m 700 "$WORKTREE_ROOT"
+
+info "creating linked worktree"
+
+git -C "$REPO" worktree add \
+    -b "$BRANCH" \
+    "$WORKTREE" \
+    "$MAIN"
+
+# Verify the newly created worktree's identity before declaring success.
+NAME="$(
+    git -C "$WORKTREE" config --get user.name 2>/dev/null || true
+)"
+EMAIL="$(
+    git -C "$WORKTREE" config --get user.email 2>/dev/null || true
+)"
+
+[[ -n "$NAME" ]] ||
+    die "worktree created, but Git user.name is unresolved"
+
+[[ -n "$EMAIL" ]] ||
+    die "worktree created, but Git user.email is unresolved"
+
+printf '\n===== CREATED =====\n'
+printf 'issue:    %s\n' "$ISSUE"
+printf 'branch:   %s\n' "$BRANCH"
+printf 'base:     %s\n' "$LOCAL_MAIN"
+printf 'worktree: %s\n' "$WORKTREE"
+printf 'identity: %s <%s>\n' "$NAME" "$EMAIL"
+
+printf '\nNext:\n'
+printf '  cd %q\n' "$WORKTREE"

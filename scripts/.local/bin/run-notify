@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+SUCCESS_SOUND="/usr/share/sounds/freedesktop/stereo/complete.oga"
+FAILURE_SOUND="/usr/share/sounds/freedesktop/stereo/bell.oga"
+
+usage() {
+    cat <<'USAGE'
+Usage:
+  run-notify [--label "Job name"] -- command [arguments...]
+
+Examples:
+  run-notify --label "Indicant verifier" -- uv run python tools/verify.py
+  run-notify --label "Backend tests" -- uv run pytest intel/tests
+  run-notify --label "Build" -- npm run build
+USAGE
+}
+
+LABEL="Job"
+
+while (($#)); do
+    case "$1" in
+        --label)
+            (($# >= 2)) || {
+                echo "ERROR: --label requires a value" >&2
+                exit 2
+            }
+            LABEL="$2"
+            shift 2
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "ERROR: unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+    esac
+done
+
+(($# > 0)) || {
+    echo "ERROR: no command supplied" >&2
+    usage >&2
+    exit 2
+}
+
+format_duration() {
+    local total="$1"
+    local hours=$((total / 3600))
+    local minutes=$(((total % 3600) / 60))
+    local seconds=$((total % 60))
+
+    if ((hours > 0)); then
+        printf '%dh %dm %ds' "$hours" "$minutes" "$seconds"
+    elif ((minutes > 0)); then
+        printf '%dm %ds' "$minutes" "$seconds"
+    else
+        printf '%ds' "$seconds"
+    fi
+}
+
+started="$(date +%s)"
+
+systemd-inhibit \
+    --what=sleep:idle \
+    --who="Indicant development" \
+    --why="$LABEL is running" \
+    --mode=block \
+    "$@"
+
+rc=$?
+
+finished="$(date +%s)"
+elapsed="$((finished - started))"
+duration="$(format_duration "$elapsed")"
+
+if ((rc == 0)); then
+    title="$LABEL · Complete"
+    body="Finished successfully in $duration."
+    sound="$SUCCESS_SOUND"
+else
+    title="$LABEL · Failed"
+    body="Exited with status $rc after $duration."
+    sound="$FAILURE_SOUND"
+fi
+
+notify-send \
+    --app-name="Indicant" \
+    --urgency=normal \
+    --expire-time=12000 \
+    "$title" \
+    "$body" \
+    >/dev/null 2>&1 || true
+
+if [[ -r "$sound" ]]; then
+    pw-play "$sound" >/dev/null 2>&1 &
+fi
+
+exit "$rc"

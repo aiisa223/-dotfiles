@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+profile="$(cat /sys/firmware/acpi/platform_profile 2>/dev/null || true)"
+
+case "$profile" in
+    balanced)     printf 'BAL\n' ;;
+    performance)  printf 'PERF\n' ;;
+    quiet)        printf 'QUIET\n' ;;
+    cool)         printf 'COOL\n' ;;
+    *)            printf 'UNK\n' ;;
+esac

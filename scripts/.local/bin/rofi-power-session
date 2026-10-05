@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+THEME="$HOME/.config/rofi/superd.rasi"
+
+choice="$(
+  printf '%s\n' Lock Suspend "Log out" Reboot "Power off" |
+  rofi -dmenu -no-custom -theme "$THEME" -p "" -mesg "POWER / SESSION" || true
+)"
+[[ -n "$choice" ]] || exit 0
+
+confirm() {
+  local label="$1"
+  local answer
+  answer="$(
+    printf '%s\n' Cancel "Confirm $label" |
+    rofi -dmenu -no-custom -theme "$THEME" -p "" -mesg "CONFIRM" || true
+  )"
+  [[ "$answer" == "Confirm $label" ]]
+}
+
+case "$choice" in
+  Lock)
+    if command -v i3lock >/dev/null 2>&1; then i3lock; else loginctl lock-session; fi
+    ;;
+  Suspend) systemctl suspend ;;
+  "Log out") confirm "log out" && i3-msg exit >/dev/null ;;
+  Reboot) confirm reboot && systemctl reboot ;;
+  "Power off") confirm "power off" && systemctl poweroff ;;
+esac

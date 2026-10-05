@@ -1,0 +1,19 @@
+[init]
+	defaultBranch = main
+[pull]
+	ff = only
+[fetch]
+	prune = true
+[user]
+	useConfigOnly = true
+	email = 0.0aliimran0.01@gmail.com
+	name = aiisa
+[includeIf "gitdir:/home/ali/Data/work/projects/"]
+	path = /home/ali/.gitconfig-work
+[includeIf "gitdir:/home/ali/Data/school/projects/"]
+	path = /home/ali/.gitconfig-school-personal
+[includeIf "gitdir:/home/ali/Data/personal/projects/"]
+	path = /home/ali/.gitconfig-school-personal
+[credential "https://gitlab.com"]
+	helper = 
+	helper = !/usr/bin/glab auth git-credential

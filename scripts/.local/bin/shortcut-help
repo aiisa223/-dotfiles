@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+JSON="$HOME/.config/i3/shortcuts.json"
+
+[[ -r "$JSON" ]] || {
+    notify-send "Shortcut Help" "Cannot read $JSON"
+    exit 1
+}
+
+entries="$(
+    jq -r '
+      .shortcut[] |
+      .groupName as $group |
+      .groupItems[] |
+      [$group, .name, .value] |
+      @tsv
+    ' "$JSON"
+)"
+
+[[ -n "$entries" ]] || exit 0
+
+printf '%s\n' "$entries" |
+    awk -F '\t' '
+      {
+        printf "%-18s  %-36s  %s\n", $1, $2, $3
+      }
+    ' |
+    rofi \
+        -dmenu \
+        -i \
+        -no-custom \
+        -p 'Shortcuts' \
+        -matching fuzzy \
+        -theme-str '
+          window {
+              width: 900px;
+          }
+          listview {
+              lines: 18;
+          }
+        ' \
+        >/dev/null

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+THEME="$HOME/.config/rofi/superd.rasi"
+expr="$(printf '' | rofi -dmenu -theme "$THEME" -p "" -mesg "CALCULATOR" || true)"
+[[ -n "$expr" ]] || exit 0
+result="$(qalc -t "$expr" 2>/dev/null | tail -n1 || true)"
+[[ -n "$result" ]] || { notify-send "Calculator" "Could not evaluate: $expr"; exit 1; }
+printf '%s' "$result" | xclip -selection clipboard
+notify-send "Calculator" "$expr = $result"

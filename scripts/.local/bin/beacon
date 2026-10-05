@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /home/ali/.local/bin/hermes -p beacon "$@"

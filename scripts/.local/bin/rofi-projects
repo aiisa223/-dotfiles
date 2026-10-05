@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+THEME="$HOME/.config/rofi/superd.rasi"
+ROOT="$HOME/Data/work/projects"
+[[ -d "$ROOT" ]] || exit 0
+
+mapfile -t paths < <(find "$ROOT" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort)
+((${#paths[@]})) || exit 0
+
+name="$(printf '%s\n' "${paths[@]}" | rofi -dmenu -i -theme "$THEME" -p "" -mesg "PROJECTS" || true)"
+[[ -n "$name" && -d "$ROOT/$name" ]] || exit 0
+path="$ROOT/$name"
+
+actions=("Files" "Terminal" "Copy path")
+command -v pycharm >/dev/null 2>&1 && actions+=("PyCharm")
+
+choice="$(printf '%s\n' "${actions[@]}" | rofi -dmenu -i -theme "$THEME" -p "" -mesg "$name" || true)"
+case "$choice" in
+    Files) setsid -f dolphin "$path" >/dev/null 2>&1 ;;
+    Terminal) setsid -f kitty --directory "$path" >/dev/null 2>&1 ;;
+    PyCharm) setsid -f pycharm "$path" >/dev/null 2>&1 ;;
+    "Copy path") printf '%s' "$path" | xclip -selection clipboard ;;
+esac

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+emit() {
+    i3-msg -t get_tree |
+    jq -c '
+      def identity:
+        ((.window_properties.class? // "")+" "+(.window_properties.instance? // "")) | ascii_downcase;
+      def state($r):
+        [..|objects|select(.window? != null)|select(identity|test($r;"i"))] as $w |
+        if ([$w[]|select(.focused? == true)]|length)>0 then "focused"
+        elif ($w|length)>0 then "running"
+        else "closed" end;
+      {
+        codex:state("codex|chatgpt"),
+        pycharm:state("pycharm|jetbrains"),
+        obsidian:state("obsidian"),
+        files:state("dolphin")
+      }'
+}
+
+if [[ "${1:-}" == "--follow" ]]; then
+    emit
+    i3-msg -t subscribe -m '["window","workspace"]' |
+    while IFS= read -r _; do
+        emit
+    done
+else
+    emit
+fi

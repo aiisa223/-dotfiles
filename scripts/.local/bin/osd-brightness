@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+    up)
+        brightnessctl set +5% >/dev/null
+        ;;
+    down)
+        brightnessctl set 5%- >/dev/null
+        ;;
+    *)
+        exit 2
+        ;;
+esac
+
+value="$(
+    brightnessctl -m |
+    awk -F, 'NR == 1 {
+        gsub(/%/, "", $4)
+        print $4
+    }'
+)"
+
+dunstify \
+    -a osd \
+    --stack-tag brightness \
+    -h int:value:"$value" \
+    "BRIGHTNESS" \
+    "${value}%"

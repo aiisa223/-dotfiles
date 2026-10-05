@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+current=$(cat /sys/firmware/acpi/platform_profile)
+
+choice=$(
+    printf 'balanced\nperformance\nquiet\ncool\n' |
+    rofi -dmenu -i -p "Power profile [$current]"
+)
+
+[[ -n "$choice" ]] || exit 0
+
+case "$choice" in
+    cool|quiet|balanced|performance)
+        sudo /usr/local/bin/set-platform-profile "$choice"
+        ;;
+esac
