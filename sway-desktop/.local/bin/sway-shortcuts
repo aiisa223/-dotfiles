@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Read the actual configuration, so help follows future binding edits.
+awk '/^bindsym / { sub(/^bindsym /, ""); print }' "$HOME/.config/sway/config" |
+    rofi -dmenu -i -p Shortcuts -no-custom >/dev/null || true

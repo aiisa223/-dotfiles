@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+pictures=$(xdg-user-dir PICTURES)
+[[ -n "$pictures" ]] || pictures="$HOME/Pictures"
+mkdir -p "$pictures/Screenshots"
+file="$pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S)-$$.png"
+# Capture the focused output using the already-selected grim; no slurp dependency.
+output=$(swaymsg -r -t get_outputs | jq -r '.[] | select(.focused) | .name')
+[[ -n "$output" ]] || exit 1
+grim -o "$output" "$file"
+notify-send 'Screenshot saved' "$file"

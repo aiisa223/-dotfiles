@@ -1,0 +1,175 @@
+# Fedora Sway desktop. Sources and ownership: docs/SWAY.md.
+# Keep distro integration last; do not also start these applications elsewhere.
+set $mod Mod4
+set $term kitty
+set $menu rofi -show drun
+font pango:Terminus (TTF) 11
+
+# Precision 5570: preserve tap/clickfinger; release selection when fingers lift.
+input type:touchpad {
+    tap enabled
+    click_method clickfinger
+    drag enabled
+    drag_lock disabled
+    dwt enabled
+    scroll_method two_finger
+}
+# Clicking chooses focus; workspace navigation never moves the pointer.
+focus_follows_mouse no
+mouse_warping none
+floating_modifier $mod normal
+
+# Native solid background; no feh, picom, xset, or X11 session helpers.
+output * bg #050306 solid_color
+# Let Sway choose native output modes. No forced scale, GPU, or toolkit backend.
+xwayland enable
+
+default_border pixel 1
+default_floating_border pixel 1
+gaps inner 8
+gaps outer 4
+smart_gaps off
+client.focused          #9a66b5 #130918 #eee8f0 #9a66b5 #9a66b5
+client.focused_inactive #433a46 #050306 #cfc6d2 #433a46 #433a46
+client.unfocused        #433a46 #050306 #746a79 #433a46 #433a46
+client.urgent           #ad6079 #130918 #eee8f0 #ad6079 #ad6079
+client.background      #050306
+
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+Shift+q kill
+bindsym $mod+e exec dolphin
+bindsym Control+Shift+Escape exec $term btop
+bindsym $mod+n exec dunstctl history-pop
+bindsym $mod+Shift+d exec ~/.local/bin/sway-indicant-menu
+bindsym $mod+Shift+p exec ~/.local/bin/sway-power-menu
+bindsym Control+Shift+slash exec ~/.local/bin/sway-shortcuts
+bindsym Mod1+Tab exec ~/.local/bin/sway-window-menu
+
+# Preserve your i3 navigation: J/K/L/semicolon = left/down/up/right.
+bindsym $mod+j focus left
+bindsym $mod+Shift+j move left
+bindsym $mod+k focus down
+bindsym $mod+Shift+k move down
+bindsym $mod+l focus up
+bindsym $mod+Shift+l move up
+bindsym $mod+semicolon focus right
+bindsym $mod+Shift+semicolon move right
+bindsym $mod+Left focus left
+bindsym $mod+Shift+Left move left
+bindsym $mod+Down focus down
+bindsym $mod+Shift+Down move down
+bindsym $mod+Up focus up
+bindsym $mod+Shift+Up move up
+bindsym $mod+Right focus right
+bindsym $mod+Shift+Right move right
+
+bindsym $mod+h splith
+bindsym $mod+v splitv
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+Control+e layout toggle split
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Exit' 'swaymsg exit'
+
+# Indicant engineering workspace policy.
+#
+# Numeric prefixes retain normal Mod+1..0 navigation while giving the primary
+# engineering contexts stable semantic names.
+
+set $ws1 "1:code"
+set $ws2 "2:agent"
+set $ws3 "3:term"
+set $ws4 "4:web"
+set $ws5 "5:ops"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# Switch workspace.
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# Move focused container to workspace.
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# Ergonomic workspace navigation.
+bindsym $mod+comma workspace prev
+bindsym $mod+period workspace next
+bindsym $mod+b workspace back_and_forth
+
+# Preserve unambiguous XWayland routing; native PyCharm uses app_id.
+assign [class="^jetbrains-pycharm$"] $ws1
+assign [app_id="^jetbrains-pycharm$"] $ws1
+assign [class="^Chatgpt$" instance=".*Codex.*"] $ws2
+# Do not guess a generic native ChatGPT app_id for Codex routing.
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
+for_window [app_id="^IndicantScratch$"] floating enable, resize set 1200 760, move scratchpad
+for_window [class="^IndicantScratch$"] floating enable, resize set 1200 760, move scratchpad
+bindsym $mod+grave exec ~/.local/bin/sway-scratchpad
+bindsym $mod+Shift+grave exec kitty --class IndicantScratch
+
+mode "resize" {
+    bindsym j resize shrink width 10 px
+    bindsym k resize grow height 10 px
+    bindsym l resize shrink height 10 px
+    bindsym semicolon resize grow width 10 px
+    bindsym Left resize shrink width 10 px
+    bindsym Down resize grow height 10 px
+    bindsym Up resize shrink height 10 px
+    bindsym Right resize grow width 10 px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Controls work while locked; no launchers or session actions are unlockable.
+bindsym --locked XF86AudioRaiseVolume exec ~/.local/bin/sway-volume up
+bindsym --locked XF86AudioLowerVolume exec ~/.local/bin/sway-volume down
+bindsym --locked XF86AudioMute exec ~/.local/bin/sway-volume mute
+bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindsym --locked XF86MonBrightnessUp exec ~/.local/bin/sway-brightness up
+bindsym --locked XF86MonBrightnessDown exec ~/.local/bin/sway-brightness down
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym Control+Mod1+l exec swaylock -f -c 282828
+bindsym XF86ScreenSaver exec swaylock -f -c 282828
+bindsym Print exec ~/.local/bin/sway-screenshot
+bindsym $mod+Shift+s exec ~/.local/bin/sway-screenshot
+
+### Idle configuration
+# No automatic suspend or output-power policy. -f returns only after locking.
+exec swayidle -w
+# The RPM's LXQt-only autostart excludes Sway. Start the selected agent here.
+exec /usr/libexec/lxqt-policykit-agent
+
+# Packaged session/environment/cgroup ownership; no parallel custom services.
+include /etc/sway/config.d/*
+include /usr/share/sway-systemd/95-xdg-desktop-autostart.conf

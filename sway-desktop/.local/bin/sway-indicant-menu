@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO="$HOME/Data/work/projects/velos_monitor"
+[[ -d "$REPO" ]] || REPO="$HOME"
+
+notify_error() {
+    notify-send \
+        --app-name="Indicant" \
+        --urgency=normal \
+        "Indicant" \
+        "$1"
+}
+
+show_terminal_output() {
+    local title="$1"
+    shift
+
+    kitty \
+        --hold \
+        --title "$title" \
+        --directory "$REPO" \
+        "$@" \
+        >/dev/null 2>&1 &
+}
+
+show_scratchpad() {
+    "$HOME/.local/bin/sway-scratchpad"
+}
+
+choice="$(
+    printf '%s\n' \
+        'Code workspace' \
+        'Agent workspace' \
+        'Indicant terminal' \
+        'Git status' \
+        'Git worktrees' \
+        'Podman status' \
+        'Open GitHub repository' \
+        'Open Linear' \
+        'Open Beacon Labs Drive' \
+        'Verifier help' |
+    rofi \
+        -dmenu \
+        -i \
+        -p 'Indicant' \
+        -no-custom
+)" || exit 0
+
+case "$choice" in
+    'Code workspace')
+        swaymsg 'workspace "1:code"' >/dev/null
+        ;;
+
+    'Agent workspace')
+        swaymsg 'workspace "2:agent"' >/dev/null
+        ;;
+
+    'Indicant terminal')
+        show_scratchpad
+        ;;
+
+    'Git status')
+        show_terminal_output \
+            'Indicant · Git status' \
+            bash -lc '
+                git status --short --branch
+                printf "\n"
+                git log -1 --decorate --oneline
+            '
+        ;;
+
+    'Git worktrees')
+        show_terminal_output \
+            'Indicant · Worktrees' \
+            git worktree list
+        ;;
+
+    'Podman status')
+        show_terminal_output \
+            'Indicant · Podman' \
+            bash -lc '
+                printf "===== CONTAINERS =====\n"
+                podman ps \
+                    --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+
+                printf "\n===== VOLUMES =====\n"
+                podman volume ls
+            '
+        ;;
+
+    'Open GitHub repository')
+        if command -v gh >/dev/null 2>&1; then
+            (
+                cd "$REPO"
+                gh repo view --web
+            ) >/dev/null 2>&1 &
+        else
+            notify_error "GitHub CLI is unavailable."
+        fi
+        ;;
+
+    'Open Linear')
+        xdg-open 'https://linear.app/' >/dev/null 2>&1 &
+        ;;
+
+    'Open Beacon Labs Drive')
+        xdg-open 'https://drive.google.com/drive/my-drive' >/dev/null 2>&1 &
+        ;;
+
+    'Verifier help')
+        show_terminal_output \
+            'Indicant · Verifier' \
+            uv run python tools/verify.py --help
+        ;;
+esac

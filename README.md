@@ -1,17 +1,9 @@
-# Fedora Workstation Dotfiles
+# Ali's workstation dotfiles
 
-User configuration managed with Git + GNU Stow.
+The Fedora Sway desktop is a complete, independently installable profile in `sway-desktop/`, adapted from this repository's existing i3 workflow and the selected Kitty/Rofi/Waybar/Dunst/LXQt PolicyKit/swayidle/swaylock stack.
 
-## Ownership
+See **[installation, ownership, rollback, keybindings, and upstream references](docs/SWAY.md)**. Start with `bash install-sway.sh --packages` as your normal user on Fedora. The installer backs up existing desktop files and links this checkout; log out and select Sway in GDM afterward.
 
-- User configuration: this repository + GNU Stow
-- System packages: DNF/RPM
-- Sandboxed applications: Flatpak
-- Node runtimes: fnm
-- Python runtimes: uv
-- Containers: Podman
-- Project dependencies: individual project repositories
+The original Stow packages and developer configuration remain available. Do not Stow legacy desktop packages over the new profile. Shell, Git, development tools, and services are not installed or changed by the Sway installer.
 
-Stow target: `$HOME`.
-
-Do not commit credentials, authentication state, caches, databases, or generated runtime state.
+Ownership: dotfiles in Git, distro software through DNF, applications through Flatpak where appropriate, JavaScript through fnm, Python tools through uv, and containers through Podman. Never commit secrets, caches, or downloaded tool binaries.

@@ -1,0 +1,15 @@
+* {
+    font-family: "Terminus (TTF)", monospace;
+    font-size: 13px;
+    border-radius: 0;
+    min-height: 0;
+}
+window#waybar { background: #050306; color: #cfc6d2; border-bottom: 1px solid #433a46; }
+#workspaces button { padding: 0 8px; color: #746a79; background: transparent; border: none; }
+#workspaces button.focused { color: #eee8f0; background: #6a3c7d; }
+#workspaces button.urgent, #battery.critical { background: #8d4a63; color: #eee8f0; }
+#workspaces button:hover { background: #2a1631; box-shadow: none; }
+#mode { color: #9a66b5; }
+#network, #wireplumber, #backlight, #battery, #clock, #tray, #custom-session { padding: 0 6px; }
+#battery.warning { color: #a58c6c; }
+#custom-session { color: #9a66b5; }

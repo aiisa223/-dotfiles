@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+find_id() {
+    swaymsg -r -t get_tree | jq -r '[.. | objects | select(.app_id? == "IndicantScratch" or .window_properties.class? == "IndicantScratch") | .id][0] // empty'
+}
+id=$(find_id)
+if [[ -z "$id" ]]; then
+    directory="$HOME/Data/work/projects/velos_monitor"
+    [[ -d "$directory" ]] || directory="$HOME"
+    kitty --detach --class IndicantScratch --directory "$directory"
+    for _ in {1..40}; do
+        id=$(find_id)
+        [[ -n "$id" ]] && break
+        sleep 0.05
+    done
+fi
+if [[ "$id" =~ ^[0-9]+$ ]]; then
+    swaymsg "[con_id=$id] scratchpad show" >/dev/null
+else
+    notify-send Scratchpad 'Kitty did not appear within two seconds.'
+    exit 1
+fi
