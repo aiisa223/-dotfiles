@@ -2,6 +2,7 @@
 """Link the desktop profile; retain exact old files/symlinks for restoration."""
 import argparse
 import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -15,10 +16,34 @@ TARGETS = [f'.config/{name}' for name in
            ('sway', 'swayidle', 'swaylock', 'waybar', 'rofi', 'kitty', 'dunst')]
 TARGETS += ['.config/xdg-desktop-portal/sway-portals.conf',
             '.config/autostart/nvidia-settings-user.desktop',
+            '.config/autostart/org.freedesktop.IBus.Panel.Wayland.Gtk3.desktop',
             '.config/systemd/user/sway-selection-clipboard.service',
             '.config/systemd/user/sway-session.target.wants/sway-selection-clipboard.service']
 TARGETS += [str(p.relative_to(PROFILE)) for p in sorted((PROFILE / '.local/bin').iterdir())]
 WAYBAR = '.config/systemd/user/sway-session.target.wants/waybar.service'
+IMSETTINGS = Path('/etc/xdg/autostart/imsettings-start.desktop')
+IMSETTINGS_TARGET = '.config/autostart/imsettings-start.desktop'
+
+
+def exclude_sway(text):
+    """Preserve the packaged desktop entry, excluding only Sway."""
+    lines = text.splitlines(keepends=True)
+    start = next(i for i, line in enumerate(lines) if line.strip() == '[Desktop Entry]')
+    end = next((i for i in range(start + 1, len(lines)) if lines[i].lstrip().startswith('[')), len(lines))
+    for key in ('OnlyShowIn', 'NotShowIn'):
+        for i in range(start + 1, end):
+            if lines[i].startswith(key + '='):
+                desktops = [name for name in lines[i].split('=', 1)[1].strip().split(';') if name]
+                if key == 'OnlyShowIn':
+                    desktops = [name for name in desktops if name != 'sway']
+                elif 'sway' not in desktops:
+                    desktops.append('sway')
+                lines[i] = key + '=' + ';'.join(desktops) + ';\n'
+                return ''.join(lines)
+    if end and not lines[end - 1].endswith('\n'):
+        lines[end - 1] += '\n'
+    lines.insert(end, 'NotShowIn=sway;\n')
+    return ''.join(lines)
 
 
 def exists(path):
@@ -60,9 +85,18 @@ def restore(backup):
 
 
 def install():
+    generated = None
+    if IMSETTINGS.is_file():
+        text = exclude_sway(IMSETTINGS.read_text())
+        digest = hashlib.sha256(text.encode()).hexdigest()
+        generated = HOME / '.local/state/sway-dotfiles/generated' / f'imsettings-{digest}.desktop'
     # Preflight all ancestors before making backups or links.
-    for relative in TARGETS + [WAYBAR]:
+    for relative in TARGETS + [WAYBAR] + ([IMSETTINGS_TARGET] if generated else []):
         check_parents(HOME / relative)
+    if generated:
+        check_parents(generated)
+        if exists(generated) and (generated.is_symlink() or generated.read_text() != text):
+            raise RuntimeError(f'Generated desktop entry was modified: {generated}')
     # Ask systemd which packaged unit it will actually use.
     unit = subprocess.check_output(
         ['systemctl', '--user', 'show', '-p', 'FragmentPath', '--value', 'waybar.service'],
@@ -71,8 +105,11 @@ def install():
         raise RuntimeError('Packaged Waybar unit was not found.')
     links = [(relative, str(PROFILE / relative)) for relative in TARGETS]
     links += [(WAYBAR, unit)]
+    if generated:
+        links += [(IMSETTINGS_TARGET, str(generated))]
     pending = [(rel, link) for rel, link in links
-               if not ((HOME / rel).is_symlink() and os.readlink(HOME / rel) == link)]
+               if not ((HOME / rel).is_symlink() and os.readlink(HOME / rel) == link)
+               or (rel == IMSETTINGS_TARGET and generated and not generated.exists())]
     if not pending:
         print('Sway profile is already linked; no files changed.')
         return
@@ -82,6 +119,9 @@ def install():
     backup.mkdir(parents=True, mode=0o700)
     manifest = {'home': str(HOME), 'repo': str(REPO), 'entries': []}
     try:
+        if generated and not generated.exists():
+            generated.parent.mkdir(parents=True, exist_ok=True)
+            generated.write_text(text)
         for relative, link in pending:
             target = HOME / relative
             target.parent.mkdir(parents=True, exist_ok=True)

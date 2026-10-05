@@ -18,6 +18,7 @@ class InstallationTests(unittest.TestCase):
         self.unit = self.home / 'packaged-waybar.service'
         self.unit.write_text('[Unit]\nDescription=Test fixture\n')
         self.patches = [patch.object(installer, 'HOME', self.home),
+                        patch.object(installer, 'IMSETTINGS', self.home / 'imsettings-start.desktop'),
                         patch.object(installer.subprocess, 'check_output', return_value=str(self.unit)),
                         patch.object(installer.subprocess, 'run')]
         for item in self.patches:
@@ -76,6 +77,47 @@ class InstallationTests(unittest.TestCase):
                 installer.install()
         for relative in installer.TARGETS + [installer.WAYBAR]:
             self.assertFalse(os.path.lexists(self.home / relative))
+
+    def test_imsettings_override_preserves_other_desktops_and_restores(self):
+        source = '[Desktop Entry]\nName=IMSettings\nExec=imsettings-boot.sh\nNotShowIn=GNOME;KDE;\nX-Custom=true\n'
+        installer.IMSETTINGS.write_text(source)
+        target = self.home / installer.IMSETTINGS_TARGET
+        target.parent.mkdir(parents=True)
+        target.write_text('previous user override\n')
+        backup = self.install()
+        self.assertEqual(target.read_text(), source.replace('GNOME;KDE;', 'GNOME;KDE;sway;'))
+        self.assertEqual(installer.IMSETTINGS.read_text(), source)
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.install()
+        self.assertEqual(list(backup.parent.iterdir()), [backup])
+        with contextlib.redirect_stdout(io.StringIO()):
+            installer.restore(backup)
+        self.assertEqual(target.read_text(), 'previous user override\n')
+
+    def test_updated_packaged_entry_refreshes_override(self):
+        installer.IMSETTINGS.write_text('[Desktop Entry]\nExec=old-command\n')
+        self.install()
+        installer.IMSETTINGS.write_text('[Desktop Entry]\nExec=new-command\n')
+        self.install()
+        target = self.home / installer.IMSETTINGS_TARGET
+        self.assertIn('Exec=new-command\n', target.read_text())
+        self.assertEqual(target.read_text().count('NotShowIn='), 1)
+
+    def test_failed_install_restores_imsettings_override(self):
+        installer.IMSETTINGS.write_text('[Desktop Entry]\nExec=imsettings-boot.sh\n')
+        target = self.home / installer.IMSETTINGS_TARGET
+        target.parent.mkdir(parents=True)
+        target.write_text('previous override\n')
+        with patch.object(installer.subprocess, 'run', side_effect=subprocess.CalledProcessError(1, 'systemctl')):
+            with contextlib.redirect_stdout(io.StringIO()), self.assertRaises(subprocess.CalledProcessError):
+                installer.install()
+        self.assertEqual(target.read_text(), 'previous override\n')
+
+    def test_desktop_exclusion_preserves_sections_and_onlyshowin(self):
+        text = '[Desktop Entry]\nOnlyShowIn=sway;XFCE;\nExec=command\n[Desktop Action example]\nNotShowIn=OTHER;\n'
+        expected = text.replace('OnlyShowIn=sway;XFCE;', 'OnlyShowIn=XFCE;')
+        self.assertEqual(installer.exclude_sway(text), expected)
+        self.assertEqual(installer.exclude_sway(expected), expected)
 
 
 if __name__ == '__main__':

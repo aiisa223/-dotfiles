@@ -17,7 +17,7 @@ source /etc/os-release
 packages=(sway sway-config-upstream sway-systemd kitty waybar rofi dunst
     lxqt-policykit swayidle swaylock brightnessctl grim slurp util-linux wl-clipboard
     xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
-    gnome-keyring wireplumber python3 jq libnotify xdg-user-dirs playerctl
+    gnome-keyring ibus wireplumber python3 jq libnotify xdg-user-dirs playerctl
     dolphin btop NetworkManager-tui dejavu-sans-mono-fonts)
 if [[ ${1:-} == --packages ]]; then
     sudo dnf install "${packages[@]}"

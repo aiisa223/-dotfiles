@@ -6,4 +6,6 @@ See **[installation](docs/SWAY.md)**, **[tiling controls](docs/TILING.md)**, **[
 
 The original Stow packages and developer configuration remain available. Do not Stow legacy desktop packages over the new profile. Shell, Git, development tools, and services are not installed or changed by the Sway installer.
 
+[Input-method ownership](docs/INPUT-METHOD.md): one native Wayland IBus autostart entry in Sway, with a derived Sway exclusion for Fedora's legacy IMSettings launcher. Other desktop sessions retain their packaged settings.
+
 Ownership: dotfiles in Git, distro software through DNF, applications through Flatpak where appropriate, JavaScript through fnm, Python tools through uv, and containers through Podman. Never commit secrets, caches, or downloaded tool binaries.
