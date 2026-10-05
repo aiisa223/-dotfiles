@@ -15,7 +15,7 @@ fi
 source /etc/os-release
 [[ $ID == fedora ]] || { echo 'This installer targets Fedora; no files changed.'; exit 1; }
 packages=(sway sway-config-upstream sway-systemd kitty waybar rofi dunst
-    lxqt-policykit swayidle swaylock brightnessctl grim
+    lxqt-policykit swayidle swaylock brightnessctl grim slurp util-linux
     xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr
     gnome-keyring wireplumber python3 jq libnotify xdg-user-dirs playerctl
     dolphin btop NetworkManager-tui dejavu-sans-mono-fonts)

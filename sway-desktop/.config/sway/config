@@ -213,8 +213,10 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
 bindsym Control+Mod1+l exec swaylock -f -c 282828
 bindsym XF86ScreenSaver exec swaylock -f -c 282828
-bindsym Print exec ~/.local/bin/sway-screenshot
-bindsym $mod+Shift+s exec ~/.local/bin/sway-screenshot
+# Start the selector after the shortcut keys are released.
+bindsym --release Print exec ~/.local/bin/sway-screenshot region
+bindsym --release Shift+Print exec ~/.local/bin/sway-screenshot output
+bindsym --release $mod+Shift+s exec ~/.local/bin/sway-screenshot region
 
 ### Idle configuration
 # No automatic suspend or output-power policy. -f returns only after locking.
