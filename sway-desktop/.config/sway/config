@@ -18,17 +18,27 @@ input type:touchpad {
 focus_follows_mouse no
 mouse_warping none
 floating_modifier $mod normal
+# Sway-native tiled drag/drop; modifier dragging bypasses the titlebar threshold.
+tiling_drag enable
+tiling_drag_threshold 9
+focus_wrapping no
+default_orientation auto
+workspace_layout default
 
 # Native solid background; no feh, picom, xset, or X11 session helpers.
 output * bg #050306 solid_color
 # Let Sway choose native output modes. No forced scale, GPU, or toolkit backend.
 xwayland enable
 
-default_border pixel 1
-default_floating_border pixel 1
-gaps inner 8
-gaps outer 4
-smart_gaps off
+# Keep split layouts compact; show a clear focus edge when several windows exist.
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 6
+gaps outer 0
+smart_gaps on
+smart_borders on
+hide_edge_borders none
+titlebar_padding 6 2
 client.focused          #9a66b5 #130918 #eee8f0 #9a66b5 #9a66b5
 client.focused_inactive #433a46 #050306 #cfc6d2 #433a46 #433a46
 client.unfocused        #433a46 #050306 #746a79 #433a46 #433a46
@@ -57,12 +67,20 @@ bindsym $mod+semicolon focus right
 bindsym $mod+Shift+semicolon move right
 bindsym $mod+Left focus left
 bindsym $mod+Shift+Left move left
+bindsym $mod+Control+Left focus output left
+bindsym $mod+Control+Shift+Left move container to output left
 bindsym $mod+Down focus down
 bindsym $mod+Shift+Down move down
+bindsym $mod+Control+Down focus output down
+bindsym $mod+Control+Shift+Down move container to output down
 bindsym $mod+Up focus up
 bindsym $mod+Shift+Up move up
+bindsym $mod+Control+Up focus output up
+bindsym $mod+Control+Shift+Up move container to output up
 bindsym $mod+Right focus right
 bindsym $mod+Shift+Right move right
+bindsym $mod+Control+Right focus output right
+bindsym $mod+Control+Shift+Right move container to output right
 
 bindsym $mod+h splith
 bindsym $mod+v splitv
@@ -73,6 +91,17 @@ bindsym $mod+Control+e layout toggle split
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+space focus mode_toggle
 bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+# Work with entire groups by selecting their parent first.
+bindsym $mod+Control+space layout toggle splith splitv tabbed stacking
+bindsym $mod+Shift+f fullscreen toggle global
+# Mark one container, focus another, then swap their positions.
+bindsym $mod+Control+m mark --replace _swap
+bindsym $mod+Control+s swap container with mark _swap
+bindsym $mod+Control+Shift+m unmark _swap
+# Native Wayland touchpad gestures; keep navigation on the current output.
+bindgesture swipe:3:left workspace next_on_output
+bindgesture swipe:3:right workspace prev_on_output
 bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r reload
 bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Exit' 'swaymsg exit'
@@ -143,11 +172,34 @@ mode "resize" {
     bindsym Down resize grow height 10 px
     bindsym Up resize shrink height 10 px
     bindsym Right resize grow width 10 px
+    # Shift gives larger steps without changing normal fine adjustments.
+    bindsym Shift+Left resize shrink width 50 px
+    bindsym Shift+Down resize grow height 50 px
+    bindsym Shift+Up resize shrink height 50 px
+    bindsym Shift+Right resize grow width 50 px
     bindsym Return mode "default"
     bindsym Escape mode "default"
     bindsym $mod+r mode "default"
 }
 bindsym $mod+r mode "resize"
+
+# Workspace-local adjustments; reset returns to this profile's 6/0 defaults.
+mode "gaps" {
+    bindsym Right gaps inner current plus 2
+    bindsym Left gaps inner current minus 2
+    bindsym Up gaps outer current plus 2
+    bindsym Down gaps outer current minus 2
+    bindsym 0 gaps inner current set 0; gaps outer current set 0
+    bindsym d gaps inner current set 6; gaps outer current set 0
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+g mode "default"
+}
+bindsym $mod+g mode "gaps"
+
+# One initial-session IPC listener. Do not restart it on every config reload.
+# 9 and 10 remain manual for unrestricted split/tabbed/stacked arrangements.
+exec ~/.local/bin/autotiling --limit 2 --workspaces 1 2 3 4 5 6 7 8
 
 # Controls work while locked; no launchers or session actions are unlockable.
 bindsym --locked XF86AudioRaiseVolume exec ~/.local/bin/sway-volume up

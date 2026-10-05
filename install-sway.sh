@@ -33,6 +33,10 @@ fi
 [[ -x /usr/libexec/lxqt-policykit-agent && -f /etc/sway/config.d/10-systemd-session.conf && -f /usr/share/sway-systemd/95-xdg-desktop-autostart.conf ]] || {
     echo 'Expected Fedora session integration is missing; no files changed.'; exit 1;
 }
+[[ -x "$HOME/.local/bin/autotiling" ]] || {
+    echo 'Install the isolated Python tool first: uv tool install --python /usr/bin/python3 autotiling==1.9.3'
+    exit 1
+}
 systemctl --user cat sway-session.target waybar.service >/dev/null
 WLR_BACKENDS=headless WLR_RENDERER=pixman sway --validate --config "$repo/sway-desktop/.config/sway/config"
 python3 "$repo/tools/install_sway.py"
