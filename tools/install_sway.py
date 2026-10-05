@@ -14,7 +14,9 @@ PROFILE = REPO / 'sway-desktop'
 TARGETS = [f'.config/{name}' for name in
            ('sway', 'swayidle', 'swaylock', 'waybar', 'rofi', 'kitty', 'dunst')]
 TARGETS += ['.config/xdg-desktop-portal/sway-portals.conf',
-            '.config/autostart/nvidia-settings-user.desktop']
+            '.config/autostart/nvidia-settings-user.desktop',
+            '.config/systemd/user/sway-selection-clipboard.service',
+            '.config/systemd/user/sway-session.target.wants/sway-selection-clipboard.service']
 TARGETS += [str(p.relative_to(PROFILE)) for p in sorted((PROFILE / '.local/bin').iterdir())]
 WAYBAR = '.config/systemd/user/sway-session.target.wants/waybar.service'
 

@@ -2,7 +2,7 @@
 
 The Fedora Sway desktop is a complete, independently installable profile in `sway-desktop/`, adapted from this repository's existing i3 workflow and the selected Kitty/Rofi/Waybar/Dunst/LXQt PolicyKit/swayidle/swaylock stack. The desktop uses a restrained warm-grey/gruvbox palette with readable DejaVu Sans Mono text and native CPU/RAM/temperature indicators.
 
-See **[installation](docs/SWAY.md)**, **[tiling controls](docs/TILING.md)**, **[theme and status metrics](docs/THEME.md)**, and **[screenshots](docs/SCREENSHOTS.md)**. Install the documented isolated autotiling tool with uv, then run `bash install-sway.sh --packages` as your normal user on Fedora. The installer backs up existing desktop files and links this checkout; log out and select Sway in GDM afterward.
+See **[installation](docs/SWAY.md)**, **[tiling controls](docs/TILING.md)**, **[theme and status metrics](docs/THEME.md)**, **[screenshots](docs/SCREENSHOTS.md)**, and **[automatic text copying](docs/SELECTION.md)**. Install the documented isolated autotiling tool with uv, then run `bash install-sway.sh --packages` as your normal user on Fedora. The installer backs up existing desktop files and links this checkout; log out and select Sway in GDM afterward.
 
 The original Stow packages and developer configuration remain available. Do not Stow legacy desktop packages over the new profile. Shell, Git, development tools, and services are not installed or changed by the Sway installer.
 
