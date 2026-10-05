@@ -1,8 +1,8 @@
 {
   "layer": "top",
   "position": "top",
-  "height": 30,
-  "spacing": 8,
+  "height": 34,
+  "spacing": 4,
   "modules-left": [
     "sway/workspaces",
     "sway/mode"
@@ -11,6 +11,9 @@
     "sway/window"
   ],
   "modules-right": [
+    "cpu",
+    "memory",
+    "temperature",
     "network",
     "wireplumber",
     "backlight",
@@ -28,7 +31,7 @@
     "format": "{}"
   },
   "sway/window": {
-    "max-length": 45,
+    "max-length": 24,
     "separate-outputs": true
   },
   "network": {
@@ -72,5 +75,26 @@
   },
   "tray": {
     "spacing": 8
+  },
+  "cpu": {
+    "interval": 3,
+    "format": "CPU {usage}%",
+    "tooltip": false,
+    "on-click": "kitty btop"
+  },
+  "memory": {
+    "interval": 5,
+    "format": "RAM {used:.1f} GiB",
+    "tooltip-format": "Used {used:.1f} / {total:.1f} GiB",
+    "on-click": "kitty btop"
+  },
+  "temperature": {
+    "interval": 5,
+    "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon",
+    "input-filename": "temp1_input",
+    "format": "CPU {temperatureF}\u00b0F",
+    "critical-threshold": 90,
+    "format-critical": "CPU {temperatureF}\u00b0F HOT",
+    "tooltip-format": "Intel CPU package: {temperatureF}\u00b0F ({temperatureC}\u00b0C)"
   }
 }

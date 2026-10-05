@@ -3,7 +3,7 @@
 set $mod Mod4
 set $term kitty
 set $menu rofi -show drun
-font pango:Terminus (TTF) 11
+font pango:DejaVu Sans Mono 11
 
 # Precision 5570: preserve tap/clickfinger; release selection when fingers lift.
 input type:touchpad {
@@ -26,7 +26,7 @@ default_orientation auto
 workspace_layout default
 
 # Native solid background; no feh, picom, xset, or X11 session helpers.
-output * bg #050306 solid_color
+output * bg #282828 solid_color
 # Let Sway choose native output modes. No forced scale, GPU, or toolkit backend.
 xwayland enable
 
@@ -39,11 +39,11 @@ smart_gaps on
 smart_borders on
 hide_edge_borders none
 titlebar_padding 6 2
-client.focused          #9a66b5 #130918 #eee8f0 #9a66b5 #9a66b5
-client.focused_inactive #433a46 #050306 #cfc6d2 #433a46 #433a46
-client.unfocused        #433a46 #050306 #746a79 #433a46 #433a46
-client.urgent           #ad6079 #130918 #eee8f0 #ad6079 #ad6079
-client.background      #050306
+client.focused          #928374 #504945 #c8c3b7 #928374 #928374
+client.focused_inactive #3c3836 #282828 #c8c3b7 #3c3836 #3c3836
+client.unfocused        #3c3836 #282828 #aaa69b #3c3836 #3c3836
+client.urgent           #bdae93 #32302f #c8c3b7 #bdae93 #bdae93
+client.background      #282828
 
 bindsym $mod+Return exec $term
 bindsym $mod+d exec $menu

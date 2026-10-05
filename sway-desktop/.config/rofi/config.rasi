@@ -2,7 +2,7 @@ configuration {
     modi: "drun,run";
     show-icons: false;
     drun-display-format: "{name}";
-    font: "Terminus (TTF) 13";
+    font: "DejaVu Sans Mono 12";
 }
 
-@theme "unix-purple"
+@theme "unix-grey"

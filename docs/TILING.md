@@ -22,7 +22,7 @@ Autotiling is the upstream `nwg-piotr/autotiling` tool, pinned to its published 
 | In gaps mode: Up / Down | Increase/decrease outer gaps by 2 pixels |
 | In gaps mode: 0 / D / Escape | Zero gaps / restore 6-inner and 0-outer defaults / exit mode |
 
-Two-pixel purple focus borders distinguish adjacent windows. Smart gaps remove gaps on single-child workspaces; smart borders hide borders with only one visible child. Split layouts omit titlebars while tabbed/stacked containers retain their tab/title controls. Directional focus no longer wraps at a container edge. These dimensions and focus behavior are chosen preferences, not Fedora-mandated values. The native tiled-drag feature is made explicit but was already enabled by Sway's default; its titlebar threshold is retained at the documented default 9, and does not affect modifier dragging.
+Two-pixel warm-grey focus borders distinguish adjacent windows. Smart gaps remove gaps on single-child workspaces; smart borders hide borders with only one visible child. Split layouts omit titlebars while tabbed/stacked containers retain their tab/title controls. Directional focus no longer wraps at a container edge. These dimensions and focus behavior are chosen preferences, not Fedora-mandated values. The native tiled-drag feature is made explicit but was already enabled by Sway's default; its titlebar threshold is retained at the documented default 9, and does not affect modifier dragging.
 
 Update an existing linked installation:
 

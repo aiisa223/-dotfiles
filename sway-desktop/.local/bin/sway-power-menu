@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-THEME="$HOME/.config/rofi/unix-purple.rasi"
+THEME="$HOME/.config/rofi/unix-grey.rasi"
 
 choice="$(
   printf '%s\n' Lock Suspend "Log out" Reboot "Power off" |
