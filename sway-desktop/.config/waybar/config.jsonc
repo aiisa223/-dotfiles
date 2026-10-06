@@ -44,7 +44,7 @@
     "format-ethernet": "LAN",
     "format-disconnected": "Offline",
     "tooltip-format": "{ifname}: {ipaddr}",
-    "on-click": "kitty nmtui"
+    "on-click": "alacritty -e nmtui"
   },
   "wireplumber": {
     "format": "VOL {volume}%",
@@ -85,13 +85,13 @@
     "interval": 3,
     "format": "CPU {usage}%",
     "tooltip": false,
-    "on-click": "kitty btop"
+    "on-click": "alacritty -e btop"
   },
   "memory": {
     "interval": 5,
     "format": "RAM {used:.1f} GiB",
     "tooltip-format": "Used {used:.1f} / {total:.1f} GiB",
-    "on-click": "kitty btop"
+    "on-click": "alacritty -e btop"
   },
   "temperature": {
     "interval": 5,

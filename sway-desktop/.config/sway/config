@@ -1,7 +1,7 @@
 # Fedora Sway desktop. Sources and ownership: docs/SWAY.md.
 # Keep distro integration last; do not also start these applications elsewhere.
 set $mod Mod4
-set $term kitty
+set $term alacritty
 set $menu rofi -show drun
 font pango:DejaVu Sans Mono 11
 
@@ -169,7 +169,7 @@ bindsym $mod+Shift+minus move scratchpad
 for_window [app_id="^IndicantScratch$"] floating enable, resize set 1200 760, move scratchpad
 for_window [class="^IndicantScratch$"] floating enable, resize set 1200 760, move scratchpad
 bindsym $mod+grave exec ~/.local/bin/sway-scratchpad
-bindsym $mod+Shift+grave exec kitty --class IndicantScratch
+bindsym $mod+Shift+grave exec alacritty --class IndicantScratch
 
 mode "resize" {
     bindsym h resize shrink width 10 px

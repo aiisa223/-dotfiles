@@ -7,7 +7,7 @@ id=$(find_id)
 if [[ -z "$id" ]]; then
     directory="$HOME/Data/work/projects/velos_monitor"
     [[ -d "$directory" ]] || directory="$HOME"
-    kitty --detach --class IndicantScratch --directory "$directory"
+    alacritty --class IndicantScratch --working-directory "$directory" &
     for _ in {1..40}; do
         id=$(find_id)
         [[ -n "$id" ]] && break
@@ -17,6 +17,6 @@ fi
 if [[ "$id" =~ ^[0-9]+$ ]]; then
     swaymsg "[con_id=$id] scratchpad show" >/dev/null
 else
-    notify-send Scratchpad 'Kitty did not appear within two seconds.'
+    notify-send Scratchpad 'Alacritty did not appear within two seconds.'
     exit 1
 fi

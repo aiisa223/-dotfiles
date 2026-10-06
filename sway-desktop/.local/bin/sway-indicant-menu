@@ -16,11 +16,11 @@ show_terminal_output() {
     local title="$1"
     shift
 
-    kitty \
+    alacritty \
         --hold \
         --title "$title" \
-        --directory "$REPO" \
-        "$@" \
+        --working-directory "$REPO" \
+        -e "$@" \
         >/dev/null 2>&1 &
 }
 
