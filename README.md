@@ -9,3 +9,5 @@ The original Stow packages and developer configuration remain available. Do not 
 [Input-method ownership](docs/INPUT-METHOD.md): one native Wayland IBus autostart entry in Sway, with a derived Sway exclusion for Fedora's legacy IMSettings launcher. Other desktop sessions retain their packaged settings.
 
 Ownership: dotfiles in Git, distro software through DNF, applications through Flatpak where appropriate, JavaScript through fnm, Python tools through uv, and containers through Podman. Never commit secrets, caches, or downloaded tool binaries.
+
+See [controls and learning reference](docs/CONTROLS.md) for HJKL navigation, mode help, hover focus, and core Neovim motions.

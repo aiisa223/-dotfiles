@@ -14,8 +14,8 @@ input type:touchpad {
     dwt enabled
     scroll_method two_finger
 }
-# Clicking chooses focus; workspace navigation never moves the pointer.
-focus_follows_mouse no
+# Hovering chooses focus; keyboard navigation never moves the pointer.
+focus_follows_mouse yes
 mouse_warping none
 floating_modifier $mod normal
 # Sway-native tiled drag/drop; modifier dragging bypasses the titlebar threshold.
@@ -56,15 +56,23 @@ bindsym $mod+Shift+p exec ~/.local/bin/sway-power-menu
 bindsym Control+Shift+slash exec ~/.local/bin/sway-shortcuts
 bindsym Mod1+Tab exec ~/.local/bin/sway-window-menu
 
-# Preserve your i3 navigation: J/K/L/semicolon = left/down/up/right.
-bindsym $mod+j focus left
-bindsym $mod+Shift+j move left
-bindsym $mod+k focus down
-bindsym $mod+Shift+k move down
-bindsym $mod+l focus up
-bindsym $mod+Shift+l move up
-bindsym $mod+semicolon focus right
-bindsym $mod+Shift+semicolon move right
+# Vim directions: H/J/K/L = left/down/up/right.
+bindsym $mod+h focus left
+bindsym $mod+Shift+h move left
+bindsym $mod+Control+h focus output left
+bindsym $mod+Control+Shift+h move container to output left
+bindsym $mod+j focus down
+bindsym $mod+Shift+j move down
+bindsym $mod+Control+j focus output down
+bindsym $mod+Control+Shift+j move container to output down
+bindsym $mod+k focus up
+bindsym $mod+Shift+k move up
+bindsym $mod+Control+k focus output up
+bindsym $mod+Control+Shift+k move container to output up
+bindsym $mod+l focus right
+bindsym $mod+Shift+l move right
+bindsym $mod+Control+l focus output right
+bindsym $mod+Control+Shift+l move container to output right
 bindsym $mod+Left focus left
 bindsym $mod+Shift+Left move left
 bindsym $mod+Control+Left focus output left
@@ -82,7 +90,7 @@ bindsym $mod+Shift+Right move right
 bindsym $mod+Control+Right focus output right
 bindsym $mod+Control+Shift+Right move container to output right
 
-bindsym $mod+h splith
+bindsym $mod+Mod1+h splith
 bindsym $mod+v splitv
 bindsym $mod+f fullscreen toggle
 bindsym $mod+s layout stacking
@@ -164,10 +172,14 @@ bindsym $mod+grave exec ~/.local/bin/sway-scratchpad
 bindsym $mod+Shift+grave exec kitty --class IndicantScratch
 
 mode "resize" {
-    bindsym j resize shrink width 10 px
-    bindsym k resize grow height 10 px
-    bindsym l resize shrink height 10 px
-    bindsym semicolon resize grow width 10 px
+    bindsym h resize shrink width 10 px
+    bindsym j resize grow height 10 px
+    bindsym k resize shrink height 10 px
+    bindsym l resize grow width 10 px
+    bindsym Shift+h resize shrink width 50 px
+    bindsym Shift+j resize grow height 50 px
+    bindsym Shift+k resize shrink height 50 px
+    bindsym Shift+l resize grow width 50 px
     bindsym Left resize shrink width 10 px
     bindsym Down resize grow height 10 px
     bindsym Up resize shrink height 10 px
@@ -185,6 +197,10 @@ bindsym $mod+r mode "resize"
 
 # Workspace-local adjustments; reset returns to this profile's 6/0 defaults.
 mode "gaps" {
+    bindsym h gaps inner current minus 2
+    bindsym l gaps inner current plus 2
+    bindsym j gaps outer current minus 2
+    bindsym k gaps outer current plus 2
     bindsym Right gaps inner current plus 2
     bindsym Left gaps inner current minus 2
     bindsym Up gaps outer current plus 2
