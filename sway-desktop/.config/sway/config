@@ -1,0 +1,245 @@
+# Fedora Sway desktop. Sources and ownership: docs/SWAY.md.
+# Keep distro integration last; do not also start these applications elsewhere.
+set $mod Mod4
+set $term alacritty
+set $menu rofi -show drun
+font pango:DejaVu Sans Mono 11
+
+# Precision 5570: preserve tap/clickfinger; release selection when fingers lift.
+input type:touchpad {
+    tap enabled
+    click_method clickfinger
+    drag enabled
+    drag_lock disabled
+    dwt enabled
+    scroll_method two_finger
+}
+# Hovering chooses focus; keyboard navigation never moves the pointer.
+focus_follows_mouse yes
+mouse_warping none
+floating_modifier $mod normal
+# Sway-native tiled drag/drop; modifier dragging bypasses the titlebar threshold.
+tiling_drag enable
+tiling_drag_threshold 9
+focus_wrapping no
+default_orientation auto
+workspace_layout default
+
+# Native solid background; no feh, picom, xset, or X11 session helpers.
+output * bg #282828 solid_color
+# Let Sway choose native output modes. No forced scale, GPU, or toolkit backend.
+xwayland enable
+
+# Keep split layouts compact; show a clear focus edge when several windows exist.
+default_border pixel 2
+default_floating_border pixel 2
+gaps inner 6
+gaps outer 0
+smart_gaps on
+smart_borders on
+hide_edge_borders none
+titlebar_padding 6 2
+client.focused          #928374 #504945 #c8c3b7 #928374 #928374
+client.focused_inactive #3c3836 #282828 #c8c3b7 #3c3836 #3c3836
+client.unfocused        #3c3836 #282828 #aaa69b #3c3836 #3c3836
+client.urgent           #bdae93 #32302f #c8c3b7 #bdae93 #bdae93
+client.background      #282828
+
+bindsym $mod+Return exec $term
+bindsym $mod+d exec $menu
+bindsym $mod+Shift+q kill
+bindsym $mod+e exec dolphin
+bindsym Control+Shift+Escape exec $term btop
+bindsym $mod+n exec dunstctl history-pop
+bindsym $mod+Shift+d exec ~/.local/bin/sway-indicant-menu
+bindsym $mod+Shift+p exec ~/.local/bin/sway-power-menu
+bindsym Control+Shift+slash exec ~/.local/bin/sway-shortcuts
+bindsym Mod1+Tab exec ~/.local/bin/sway-window-menu
+
+# Vim directions: H/J/K/L = left/down/up/right.
+bindsym $mod+h focus left
+bindsym $mod+Shift+h move left
+bindsym $mod+Control+h focus output left
+bindsym $mod+Control+Shift+h move container to output left
+bindsym $mod+j focus down
+bindsym $mod+Shift+j move down
+bindsym $mod+Control+j focus output down
+bindsym $mod+Control+Shift+j move container to output down
+bindsym $mod+k focus up
+bindsym $mod+Shift+k move up
+bindsym $mod+Control+k focus output up
+bindsym $mod+Control+Shift+k move container to output up
+bindsym $mod+l focus right
+bindsym $mod+Shift+l move right
+bindsym $mod+Control+l focus output right
+bindsym $mod+Control+Shift+l move container to output right
+bindsym $mod+Left focus left
+bindsym $mod+Shift+Left move left
+bindsym $mod+Control+Left focus output left
+bindsym $mod+Control+Shift+Left move container to output left
+bindsym $mod+Down focus down
+bindsym $mod+Shift+Down move down
+bindsym $mod+Control+Down focus output down
+bindsym $mod+Control+Shift+Down move container to output down
+bindsym $mod+Up focus up
+bindsym $mod+Shift+Up move up
+bindsym $mod+Control+Up focus output up
+bindsym $mod+Control+Shift+Up move container to output up
+bindsym $mod+Right focus right
+bindsym $mod+Shift+Right move right
+bindsym $mod+Control+Right focus output right
+bindsym $mod+Control+Shift+Right move container to output right
+
+bindsym $mod+Mod1+h splith
+bindsym $mod+v splitv
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+Control+e layout toggle split
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+# Work with entire groups by selecting their parent first.
+bindsym $mod+Control+space layout toggle splith splitv tabbed stacking
+bindsym $mod+Shift+f fullscreen toggle global
+# Mark one container, focus another, then swap their positions.
+bindsym $mod+Control+m mark --replace _swap
+bindsym $mod+Control+s swap container with mark _swap
+bindsym $mod+Control+Shift+m unmark _swap
+# Native Wayland touchpad gestures; keep navigation on the current output.
+bindgesture swipe:3:left workspace next_on_output
+bindgesture swipe:3:right workspace prev_on_output
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r reload
+bindsym $mod+Shift+e exec swaynag -t warning -m 'Exit Sway?' -B 'Exit' 'swaymsg exit'
+
+# Indicant engineering workspace policy.
+#
+# Numeric prefixes retain normal Mod+1..0 navigation while giving the primary
+# engineering contexts stable semantic names.
+
+set $ws1 "1:code"
+set $ws2 "2:agent"
+set $ws3 "3:term"
+set $ws4 "4:web"
+set $ws5 "5:ops"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
+
+# Switch workspace.
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# Move focused container to workspace.
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+# Ergonomic workspace navigation.
+bindsym $mod+comma workspace prev
+bindsym $mod+period workspace next
+bindsym $mod+b workspace back_and_forth
+
+# Preserve unambiguous XWayland routing; native PyCharm uses app_id.
+assign [class="^jetbrains-pycharm$"] $ws1
+assign [app_id="^jetbrains-pycharm$"] $ws1
+assign [class="^Chatgpt$" instance=".*Codex.*"] $ws2
+# Do not guess a generic native ChatGPT app_id for Codex routing.
+bindsym $mod+minus scratchpad show
+bindsym $mod+Shift+minus move scratchpad
+for_window [app_id="^IndicantScratch$"] floating enable, resize set 1200 760, move scratchpad
+for_window [class="^IndicantScratch$"] floating enable, resize set 1200 760, move scratchpad
+bindsym $mod+grave exec ~/.local/bin/sway-scratchpad
+bindsym $mod+Shift+grave exec alacritty --class IndicantScratch
+
+mode "resize" {
+    bindsym h resize shrink width 10 px
+    bindsym j resize grow height 10 px
+    bindsym k resize shrink height 10 px
+    bindsym l resize grow width 10 px
+    bindsym Shift+h resize shrink width 50 px
+    bindsym Shift+j resize grow height 50 px
+    bindsym Shift+k resize shrink height 50 px
+    bindsym Shift+l resize grow width 50 px
+    bindsym Left resize shrink width 10 px
+    bindsym Down resize grow height 10 px
+    bindsym Up resize shrink height 10 px
+    bindsym Right resize grow width 10 px
+    # Shift gives larger steps without changing normal fine adjustments.
+    bindsym Shift+Left resize shrink width 50 px
+    bindsym Shift+Down resize grow height 50 px
+    bindsym Shift+Up resize shrink height 50 px
+    bindsym Shift+Right resize grow width 50 px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Workspace-local adjustments; reset returns to this profile's 6/0 defaults.
+mode "gaps" {
+    bindsym h gaps inner current minus 2
+    bindsym l gaps inner current plus 2
+    bindsym j gaps outer current minus 2
+    bindsym k gaps outer current plus 2
+    bindsym Right gaps inner current plus 2
+    bindsym Left gaps inner current minus 2
+    bindsym Up gaps outer current plus 2
+    bindsym Down gaps outer current minus 2
+    bindsym 0 gaps inner current set 0; gaps outer current set 0
+    bindsym d gaps inner current set 6; gaps outer current set 0
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+g mode "default"
+}
+bindsym $mod+g mode "gaps"
+
+# One initial-session IPC listener. Do not restart it on every config reload.
+# 9 and 10 remain manual for unrestricted split/tabbed/stacked arrangements.
+exec ~/.local/bin/autotiling --limit 2 --workspaces 1 2 3 4 5 6 7 8
+
+# Controls work while locked; no launchers or session actions are unlockable.
+bindsym --locked XF86AudioRaiseVolume exec ~/.local/bin/sway-volume up
+bindsym --locked XF86AudioLowerVolume exec ~/.local/bin/sway-volume down
+bindsym --locked XF86AudioMute exec ~/.local/bin/sway-volume mute
+bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindsym --locked XF86MonBrightnessUp exec ~/.local/bin/sway-brightness up
+bindsym --locked XF86MonBrightnessDown exec ~/.local/bin/sway-brightness down
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym Control+Mod1+l exec swaylock -f -c 282828
+bindsym XF86ScreenSaver exec swaylock -f -c 282828
+# Start the selector after the shortcut keys are released.
+bindsym --release Print exec ~/.local/bin/sway-screenshot region
+bindsym --release Shift+Print exec ~/.local/bin/sway-screenshot output
+bindsym --release $mod+Shift+s exec ~/.local/bin/sway-screenshot region
+
+### Idle configuration
+# No automatic suspend or output-power policy. -f returns only after locking.
+exec swayidle -w
+# The RPM's LXQt-only autostart excludes Sway. Start the selected agent here.
+exec /usr/libexec/lxqt-policykit-agent
+
+# Packaged session/environment/cgroup ownership; no parallel custom services.
+include /etc/sway/config.d/*
+include /usr/share/sway-systemd/95-xdg-desktop-autostart.conf

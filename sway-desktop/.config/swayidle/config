@@ -1,0 +1,3 @@
+timeout 3600 'swaylock -f -c 282828'
+lock 'swaylock -f -c 282828'
+before-sleep 'swaylock -f -c 282828'

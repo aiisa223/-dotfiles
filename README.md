@@ -1,17 +1,13 @@
-# Fedora Workstation Dotfiles
+# Ali's workstation dotfiles
 
-User configuration managed with Git + GNU Stow.
+The Fedora Sway desktop is a complete, independently installable profile in `sway-desktop/`, adapted from this repository's existing i3 workflow and the selected Kitty/Rofi/Waybar/Dunst/LXQt PolicyKit/swayidle/swaylock stack. The desktop uses a restrained warm-grey/gruvbox palette with readable DejaVu Sans Mono text and native CPU/RAM/temperature indicators.
 
-## Ownership
+See **[installation](docs/SWAY.md)**, **[tiling controls](docs/TILING.md)**, **[theme and status metrics](docs/THEME.md)**, **[screenshots](docs/SCREENSHOTS.md)**, and **[automatic text copying](docs/SELECTION.md)**. Install the documented isolated autotiling tool with uv, then run `bash install-sway.sh --packages` as your normal user on Fedora. The installer backs up existing desktop files and links this checkout; log out and select Sway in GDM afterward.
 
-- User configuration: this repository + GNU Stow
-- System packages: DNF/RPM
-- Sandboxed applications: Flatpak
-- Node runtimes: fnm
-- Python runtimes: uv
-- Containers: Podman
-- Project dependencies: individual project repositories
+The original Stow packages and developer configuration remain available. Do not Stow legacy desktop packages over the new profile. Shell, Git, development tools, and services are not installed or changed by the Sway installer.
 
-Stow target: `$HOME`.
+[Input-method ownership](docs/INPUT-METHOD.md): one native Wayland IBus autostart entry in Sway, with a derived Sway exclusion for Fedora's legacy IMSettings launcher. Other desktop sessions retain their packaged settings.
 
-Do not commit credentials, authentication state, caches, databases, or generated runtime state.
+Ownership: dotfiles in Git, distro software through DNF, applications through Flatpak where appropriate, JavaScript through fnm, Python tools through uv, and containers through Podman. Never commit secrets, caches, or downloaded tool binaries.
+
+See [controls and learning reference](docs/CONTROLS.md) for HJKL navigation, mode help, hover focus, and core Neovim motions.

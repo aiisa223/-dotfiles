@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 || -z $1 ]]; then
+    printf 'Usage: sway-save "commit message"\n' >&2
+    exit 2
+fi
+
+cd "$HOME/sway-dotfiles"
+git add -- sway-desktop/.local/bin/sway-save
+
+if ! git diff --quiet HEAD -- sway-desktop; then
+    git commit --only -m "$1" -- sway-desktop
+else
+    printf 'No Sway configuration changes to commit.\n'
+fi
+
+git push origin HEAD
+git status --short

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=IBus Wayland
+Exec=ibus start --type wayland
+TryExec=ibus
+Icon=ibus
+NoDisplay=true
+OnlyShowIn=sway;

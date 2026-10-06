@@ -18,3 +18,6 @@ secrets.*
 
 /scripts/.local/bin/mise
 /scripts/.local/bin/omp
+
+__pycache__/
+*.pyc
