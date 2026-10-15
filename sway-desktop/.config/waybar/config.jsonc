@@ -1,0 +1,105 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "spacing": 4,
+  "modules-left": [
+    "sway/workspaces",
+    "sway/mode",
+    "sway/window"
+  ],
+  "modules-center": [],
+  "power-profiles-daemon": {
+    "format": "PWR {profile}",
+    "tooltip-format": "Power profile: {profile}\nClick to change",
+    "tooltip": true
+  },
+  "modules-right": [
+    "power-profiles-daemon",
+    "cpu",
+    "memory",
+    "temperature",
+    "network",
+    "wireplumber",
+    "backlight",
+    "battery",
+    "tray",
+    "clock",
+    "custom/session"
+  ],
+  "sway/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": false,
+    "format": "{name}"
+  },
+  "sway/mode": {
+    "format": "{}"
+  },
+  "sway/window": {
+    "max-length": 24,
+    "separate-outputs": true
+  },
+  "network": {
+    "format-wifi": "WiFi {signalStrength}%",
+    "format-ethernet": "LAN",
+    "format-disconnected": "Offline",
+    "tooltip-format": "{ifname}: {ipaddr}",
+    "on-click": "alacritty -e nmtui"
+  },
+  "wireplumber": {
+    "format": "VOL {volume}%",
+    "format-muted": "Muted",
+    "on-click": "~/.local/bin/sway-volume mute",
+    "on-scroll-up": "~/.local/bin/sway-volume up",
+    "on-scroll-down": "~/.local/bin/sway-volume down"
+  },
+  "backlight": {
+    "format": "BRT {percent}%",
+    "on-scroll-up": "~/.local/bin/sway-brightness up",
+    "on-scroll-down": "~/.local/bin/sway-brightness down"
+  },
+  "battery": {
+    "interval": 30,
+    "states": {
+      "warning": 25,
+      "critical": 10
+    },
+    "format": "BAT {capacity}%",
+    "format-charging": "AC {capacity}%",
+    "format-plugged": "AC {capacity}%",
+    "tooltip-format": "{timeTo}"
+  },
+  "clock": {
+    "format": "{:%a %d %b  %H:%M}",
+    "tooltip-format": "{:%Y-%m-%d}"
+  },
+  "custom/session": {
+    "format": "Session",
+    "tooltip": false,
+    "on-click": "~/.local/bin/sway-power-menu"
+  },
+  "tray": {
+    "spacing": 8
+  },
+  "cpu": {
+    "interval": 3,
+    "format": "CPU {usage}%",
+    "tooltip": false,
+    "on-click": "alacritty -e btop"
+  },
+  "memory": {
+    "interval": 5,
+    "format": "RAM {used:.1f} GiB",
+    "tooltip-format": "Used {used:.1f} / {total:.1f} GiB",
+    "on-click": "alacritty -e btop"
+  },
+  "temperature": {
+    "interval": 5,
+    "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon",
+    "input-filename": "temp1_input",
+    "format": "CPU {temperatureF}\u00b0F",
+    "critical-threshold": 90,
+    "format-critical": "CPU {temperatureF}\u00b0F HOT",
+    "tooltip-format": "Intel CPU package: {temperatureF}\u00b0F ({temperatureC}\u00b0C)"
+  }
+}

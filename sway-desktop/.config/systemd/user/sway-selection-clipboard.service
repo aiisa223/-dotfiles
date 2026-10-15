@@ -1,0 +1,12 @@
+[Unit]
+Description=Copy selected text to the clipboard in Sway
+Documentation=https://github.com/bugaevc/wl-clipboard
+PartOf=sway-session.target
+After=graphical-session-pre.target
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/wl-paste --primary --type text --watch %h/.local/bin/sway-selection-copy
+
+[Install]
+WantedBy=sway-session.target

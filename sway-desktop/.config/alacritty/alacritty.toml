@@ -1,0 +1,42 @@
+[window]
+padding = { x = 5, y = 5 }
+opacity = 1.0
+
+[font]
+normal = { family = "DejaVu Sans Mono" }
+size = 14.0
+
+[cursor]
+style = { shape = "Block", blinking = "Never" }
+
+[colors.primary]
+background = "#282828"
+foreground = "#c8c3b7"
+
+[colors.cursor]
+text = "#282828"
+cursor = "#c8c3b7"
+
+[colors.selection]
+text = "#d5d0c4"
+background = "#504945"
+
+[colors.normal]
+black = "#282828"
+red = "#9c7a72"
+green = "#909178"
+yellow = "#ada084"
+blue = "#90938c"
+magenta = "#9b8e88"
+cyan = "#8b9990"
+white = "#c8c3b7"
+
+[colors.bright]
+black = "#665c54"
+red = "#b08c82"
+green = "#a3a48b"
+yellow = "#b8aa91"
+blue = "#a4a79f"
+magenta = "#afa09a"
+cyan = "#9fafaa"
+white = "#d5d0c4"

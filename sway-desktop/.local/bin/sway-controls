@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""Read-only, on-demand help for this Sway profile and core Neovim controls."""
+import glob
+import os
+from pathlib import Path
+import re
+import shlex
+import subprocess
+
+
+VIM = [
+    'Normal mode: h / j / k / l → left / down / up / right',
+    'Counts: 5j → five lines down; 3w → three words forward',
+    'w / b / e → next word / previous word / end of word',
+    'W / B / E → whitespace-separated WORD motions',
+    '0 / ^ / $ → line start / first nonblank / line end',
+    'gg / G / {number}G → file start / file end / numbered line',
+    'gj / gk → down / up a display line when text wraps',
+    'H / M / L → top / middle / bottom of visible screen',
+    'Ctrl+d / Ctrl+u → half-screen down / up',
+    'Ctrl+f / Ctrl+b → screen down / up',
+    'zz / zt / zb → center cursor line / place at top / bottom',
+    'f{char} / F{char} → find character forward / backward on line',
+    't{char} / T{char} → move before / after character on line',
+    '; / , → repeat character find / reverse it',
+    '/{pattern} / ?{pattern} → search forward / backward',
+    'n / N → next search match / reverse search direction',
+    '* / # → search word under cursor forward / backward',
+    '% → matching bracket; Ctrl+o / Ctrl+i → older / newer jump',
+    'i / a / o / O → insert before / after / new line below / above',
+    'Escape → return to Normal mode',
+    'v / V / Ctrl+v → character / line / block Visual selection',
+    'd{motion} / c{motion} / y{motion} → delete / change / yank',
+    'diw / ciw / yiw → delete / change / yank inside a word',
+    'da( / ci( → delete around / change inside parentheses',
+    'dd / cc / yy → delete / change / yank a line',
+    'p / P → put after / before; u / Ctrl+r → undo / redo; . → repeat change',
+    'Ctrl+w then h / j / k / l → focus editor split left / down / up / right',
+    'Ctrl+w then H / J / K / L → move editor split left / down / up / right',
+    'Ctrl+w then + / - / > / < / = → taller / shorter / wider / narrower / equalize',
+    'Ctrl+w then s / v / c / o → split / vertical split / close / only this split',
+    'Ctrl+backslash then Ctrl+n → leave terminal input mode',
+    ':help motion / :help windows / :help map → authoritative built-in reference',
+    ':verbose map {keys} → inspect a custom mapping and where it was defined',
+    'Core reference only: custom/plugin mappings may override these keys.',
+    'Your audited leader is Space. Existing WhichKey owns plugin/prefix help.',
+]
+
+
+def bindings(path, variables=None, seen=None):
+    """Cover the profile's flat settings, mode blocks, and file/glob includes."""
+    variables = {} if variables is None else variables
+    seen = set() if seen is None else seen
+    path = Path(path).resolve()
+    if path in seen:
+        return []
+    seen.add(path)
+    rows, mode = [], 'default'
+
+    def expand(text):
+        return re.sub(r'\$\w+', lambda m: variables.get(m.group(), m.group()), text)
+
+    for raw in path.read_text().splitlines():
+        line = raw.strip()
+        setting = re.fullmatch(r'set (\$\w+) (.+)', line)
+        if setting:
+            variables[setting[1]] = expand(setting[2]).strip('"')
+        elif line.startswith('include '):
+            for pattern in shlex.split(expand(line[8:])):
+                pattern = os.path.expandvars(os.path.expanduser(pattern))
+                if not os.path.isabs(pattern):
+                    pattern = str(path.parent / pattern)
+                for included in sorted(glob.glob(pattern)):
+                    rows.extend(bindings(included, variables, seen))
+        elif line.startswith('mode ') and line.endswith('{'):
+            mode = shlex.split(line)[1]
+        elif line == '}':
+            mode = 'default'
+        elif line.startswith(('bindsym ', 'bindcode ', 'bindgesture ', 'bindswitch ')):
+            kind, value = line.split(' ', 1)
+            value = expand(value).replace('Mod4', 'Super').replace('Mod1', 'Alt')
+            rows.append(f'[{mode}] {kind}: {value}')
+    return rows
+
+
+def menu(rows, prompt):
+    result = subprocess.run(['rofi', '-dmenu', '-i', '-no-custom', '-p', prompt],
+                            input='\n'.join(rows) + '\n', text=True, capture_output=True)
+    return result.stdout.strip() if result.returncode == 0 else None
+
+
+def main():
+    rows = bindings(Path.home() / '.config/sway/config')
+    choices = ['Sway: all bindings', 'Sway: resize mode', 'Sway: gaps mode',
+               'Sway: gestures', 'Neovim: core motions and controls']
+    while (choice := menu(choices, 'Controls')):
+        if choice == choices[0]:
+            selected = rows
+        elif choice == choices[1]:
+            selected = [row for row in rows if row.startswith('[resize]')]
+        elif choice == choices[2]:
+            selected = [row for row in rows if row.startswith('[gaps]')]
+        elif choice == choices[3]:
+            selected = [row for row in rows if 'bindgesture:' in row]
+        else:
+            selected = VIM
+        menu(selected, 'Reference · select or Escape to return')
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,24 @@
+/* Restrained warm-grey UI. Native modules; no visual effects. */
+* {
+    font-family: "DejaVu Sans Mono", monospace;
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 0;
+    min-height: 0;
+    box-shadow: none;
+    text-shadow: none;
+    background-image: none;
+    transition: none;
+    animation: none;
+}
+window#waybar { background: #242424; color: #c8c3b7; border-bottom: 1px solid #3c3836; }
+#workspaces button { padding: 0 8px; color: #aaa69b; background: transparent; border: none; }
+#workspaces button.focused { color: #c8c3b7; background: #504945; border-bottom: 2px solid #928374; }
+#workspaces button.urgent, #battery.critical, #temperature.critical { background: #504945; color: #c8c3b7; font-weight: bold; }
+#workspaces button:hover { color: #c8c3b7; background: #32302f; }
+#mode { color: #c8c3b7; font-weight: bold; }
+#cpu, #memory, #temperature, #network, #wireplumber, #backlight, #battery, #clock, #tray, #custom-session { padding: 0 5px; }
+#cpu, #memory, #temperature { border-right: 1px solid #3c3836; }
+#battery.warning { color: #c8c3b7; font-weight: bold; }
+#custom-session { color: #c8c3b7; }
+tooltip { background: #282828; color: #c8c3b7; border: 1px solid #928374; }

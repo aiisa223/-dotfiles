@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# One-way primary selection -> normal clipboard. No history or disk writes.
+# Deselecting text must not erase an explicitly copied item or saved selection.
+case "${CLIPBOARD_STATE:-data}" in
+    nil|clear) exit 0 ;;
+    sensitive) exec wl-copy --type text/plain --sensitive ;;
+    *) exec wl-copy --type text/plain ;;
+esac

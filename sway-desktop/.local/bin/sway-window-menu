@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Native app_id and XWayland windows, selected by immutable IPC container ID.
+rows=$(swaymsg -r -t get_tree | jq -r '
+    .. | objects | select(.type? == "con" and (.app_id? != null or .window? != null)) |
+    "\(.id)\t\(.app_id // .window_properties.class // "window")  —  \(.name // "")"')
+[[ -n "$rows" ]] || exit 0
+index=$(printf '%s\n' "$rows" | cut -f2- | rofi -dmenu -i -no-custom -format i -p Windows) || exit 0
+[[ "$index" =~ ^[0-9]+$ ]] || exit 0
+id=$(printf '%s\n' "$rows" | sed -n "$((index + 1))p" | cut -f1)
+[[ "$id" =~ ^[0-9]+$ ]] && swaymsg "[con_id=$id] focus" >/dev/null

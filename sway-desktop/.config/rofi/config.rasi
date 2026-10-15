@@ -1,0 +1,8 @@
+configuration {
+    modi: "drun,run";
+    show-icons: false;
+    drun-display-format: "{name}";
+    font: "DejaVu Sans Mono 12";
+}
+
+@theme "unix-grey"

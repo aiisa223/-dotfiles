@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# A second keypress must not open another region selector over the first.
+exec 9>"${XDG_RUNTIME_DIR:?}/sway-screenshot.lock"
+flock -n 9 || exit 0
+
+case "${1:-region}" in
+    region)
+        # Non-TTY stdin otherwise makes slurp read predefined rectangles.
+        geometry=$(slurp -b '#28282888' -c '#928374' -s '#50494544' </dev/null) || exit 0
+        [[ -n "$geometry" ]] || exit 0
+        capture=(-g "$geometry")
+        ;;
+    output)
+        output=$(swaymsg -r -t get_outputs | jq -r '.[] | select(.focused) | .name')
+        [[ -n "$output" ]] || exit 1
+        capture=(-o "$output")
+        ;;
+    *) echo 'Usage: sway-screenshot [region|output]' >&2; exit 2 ;;
+esac
+
+pictures=$(xdg-user-dir PICTURES)
+[[ -n "$pictures" ]] || pictures="$HOME/Pictures"
+mkdir -p "$pictures/Screenshots"
+file="$pictures/Screenshots/$(date +%Y-%m-%d_%H-%M-%S)-$$.png"
+grim "${capture[@]}" "$file"
+notify-send 'Screenshot saved' "$file"
